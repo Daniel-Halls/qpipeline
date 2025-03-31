@@ -1,4 +1,4 @@
-from qpipeline.utils import run_cmd, write_to_file
+from qpipeline.base.utils import run_cmd, write_to_file
 from qpipeline.study_setup.study_setup_commands import (
     create_study,
     import_data,
