@@ -1,7 +1,23 @@
 import argparse
 
 
-def qpipeline_args() -> dict:
+def qpipeline_modules():
+    base = argparse.ArgumentParser(
+        prog="qpipeline",
+        description=print(splash()),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_subparsers(dest="command", required=True)
+    return base
+
+
+def qpipeline_args():
+    base = qpipeline_modules()
+    study_setup_args = base.add_parser("setup", help="Setup quenx study")
+    hcp_setup_args(study_setup_args)
+
+
+def hcp_setup_args(study_setup_args) -> dict:
     """
     Function to take
 
@@ -14,40 +30,35 @@ def qpipeline_args() -> dict:
     dict: dictionary
         dict of cmd args
     """
-    base_args = argparse.ArgumentParser(
-        prog="qpipeline",
-        description=print(splash()),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    base_args.add_argument(
+    study_setup_args.add_argument(
         "-s",
         "--study_folder",
         help="Path to study folder",
         dest="study_folder",
         required=True,
     )
-    base_args.add_argument(
+    study_setup_args.add_argument(
         "-r",
         "--raw_data",
         help="Path to raw data",
         dest="raw_data",
         required=True,
     )
-    base_args.add_argument(
+    study_setup_args.add_argument(
         "-i",
         "--id",
         help="Subject ID",
         dest="id",
         required=True,
     )
-    base_args.add_argument(
+    study_setup_args.add_argument(
         "-q",
         "--queue",
         help="Queue name to submit to",
         dest="queue",
         required=True,
     )
-    base_args.add_argument(
+    study_setup_args.add_argument(
         "-S",
         "--skip_study_setup",
         dest="skip_study_setup",
@@ -56,7 +67,7 @@ def qpipeline_args() -> dict:
         action="store_true",
     )
 
-    return vars(base_args.parse_args())
+    return vars(study_setup_args.parse_args())
 
 
 def splash() -> str:

@@ -1,8 +1,5 @@
-import os
-import shutil
-from pathlib import Path
-from .utils import run_cmd, write_to_file
-from .qunex_commands import (
+from qpipeline.utils import run_cmd, write_to_file
+from qpipeline.study_setup.study_setup_commands import (
     create_study,
     import_data,
     create_session_info,
@@ -10,6 +7,9 @@ from .qunex_commands import (
     set_up_hcp,
 )
 import re
+import os
+import shutil
+from pathlib import Path
 
 
 def map_files() -> dict:
