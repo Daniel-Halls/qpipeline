@@ -1,25 +1,149 @@
 import argparse
+import sys
 
 
-def qpipeline_modules():
-    base = argparse.ArgumentParser(
+def splash() -> str:
+    """
+    Function to return Splash
+
+    Parameters
+    ---------
+    None
+
+    Returns
+    -------
+    str: string object
+        splash string
+    """
+    return f"""
+               .__                 .__   .__                 
+  ____________  |__|______    ____  |  |  |__|  ____    ____  
+ / ____/\____ \ |  |\____ \ _/ __ \ |  |  |  | /    \ _/ __ \ 
+< <_|  ||  |_> >|  ||  |_> >\  ___/ |  |__|  ||   |  \\\\  ___/ 
+ \__   ||   __/ |__||   __/  \___  >|____/|__||___|  / \___  >
+    |__||__|        |__|         \/                \/      \/ 
+{"-" * 75}    
+    """
+
+
+def valid_options() -> list:
+    """
+    Function to return all the valid
+    options avaible
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    list: list object
+        list of valid option
+    """
+    return ["setup"]
+
+
+def usage_message() -> None:
+    """
+    Function to print a basic
+    usage message and exit
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    str: string
+        string of usage message
+    """
+    print(f"""
+    {splash()}
+qpipeline is a set of warpper scripts around
+qunex/hcp pipelines to make it easier to use.
+
+It consists of the following subcommands:
+    - setup (qunex folder HCP set up)
+
+run qpipeline sub_command --help for further info
+    """)
+    exit(0)
+
+
+def invalid_options(option: str, avaiable_options: list) -> None:
+    """
+    Function to print and exit
+    after an invalid option
+    was given
+
+    Parameters
+    ----------
+    option: str
+        str of option given
+    avaiable_options: list
+        list of avaiable options
+
+    Returns
+    -------
+    None
+    """
+    print(splash())
+    print(f"{option} is an invalid option")
+    print("Please specify from", *avaiable_options)
+    print("or run --help")
+    exit(1)
+
+
+def check_subcommand() -> None:
+    """
+    Function to check the subcommand
+    given to pipeline.
+
+    Parameters
+    -----------
+    None
+
+    Returns
+    -------
+    None
+    """
+
+    avaiable_options = valid_options()
+    if len(sys.argv) <= 1 or sys.argv[1] in ["-h", "--help"]:
+        usage_message()
+    if sys.argv[1] not in avaiable_options:
+        invalid_options(sys.argv[1], avaiable_options)
+
+
+def qpipeline_modules() -> object:
+    """
+    Function to set up
+    base parser and add subparsers
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    object: ArgumentParser
+        argparser object
+    """
+
+    base_parser = argparse.ArgumentParser(
         prog="qpipeline",
         description=print(splash()),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    base.add_subparsers(dest="command", required=True)
-    return base
+    subparsers = base_parser.add_subparsers(dest="command")
+    hcp_setup_args(subparsers)
+    return base_parser
 
 
-def qpipeline_args():
-    base = qpipeline_modules()
-    study_setup_args = base.add_subparsers("setup")
-    hcp_setup_args(study_setup_args)
-
-
-def hcp_setup_args(study_setup_args) -> dict:
+def hcp_setup_args(args) -> dict:
     """
-    Function to take
+    Function to take hcp set up
+    arguments
 
     Parameters
     ----------
@@ -30,6 +154,7 @@ def hcp_setup_args(study_setup_args) -> dict:
     dict: dictionary
         dict of cmd args
     """
+    study_setup_args = args.add_parser("setup", help="Set up study")
     study_setup_args.add_argument(
         "-s",
         "--study_folder",
@@ -58,36 +183,22 @@ def hcp_setup_args(study_setup_args) -> dict:
         dest="queue",
         required=True,
     )
-    study_setup_args.add_argument(
-        "-S",
-        "--skip_study_setup",
-        dest="skip_study_setup",
-        help="Skip study set up",
-        default=False,
-        action="store_true",
-    )
-
-    return vars(study_setup_args.parse_args())
 
 
-def splash() -> str:
+def qpipeline_args() -> dict:
     """
-    Function to return Splash
+    main function to return
+    all the args for sub modules
 
     Parameters
-    ---------
+    ----------
     None
 
     Returns
     -------
-    str: string object
-        splash string
+    dict: dictionary
+        dict of all args
     """
-    return """
-               .__                 .__   .__                 
-  ____________  |__|______    ____  |  |  |__|  ____    ____  
- / ____/\____ \ |  |\____ \ _/ __ \ |  |  |  | /    \ _/ __ \ 
-< <_|  ||  |_> >|  ||  |_> >\  ___/ |  |__|  ||   |  \\  ___/ 
- \__   ||   __/ |__||   __/  \___  >|____/|__||___|  / \___  >
-    |__||__|        |__|         \/                \/      \/ 
-    """
+    check_subcommand()
+    args = qpipeline_modules()
+    return vars(args.parse_args())
