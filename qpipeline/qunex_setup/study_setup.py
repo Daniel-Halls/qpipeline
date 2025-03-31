@@ -1,5 +1,5 @@
 from qpipeline.base.utils import run_cmd, write_to_file
-from qpipeline.study_setup.study_setup_commands import (
+from qpipeline.qunex_setup.qunex_commands import (
     create_study,
     import_data,
     create_session_info,

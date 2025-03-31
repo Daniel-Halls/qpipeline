@@ -7,13 +7,13 @@ def qpipeline_modules():
         description=print(splash()),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_subparsers(dest="command", required=True)
+    base.add_subparsers(dest="command", required=True)
     return base
 
 
 def qpipeline_args():
     base = qpipeline_modules()
-    study_setup_args = base.add_parser("setup", help="Setup quenx study")
+    study_setup_args = base.add_subparsers("setup")
     hcp_setup_args(study_setup_args)
 
 

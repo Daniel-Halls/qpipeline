@@ -1,7 +1,6 @@
-from .args import qpipeline_args
-from .setup import set_environment
-from .study_setup import set_up_qunex_study
-from .structural_preprocessing import strucutral_hcp
+from qpipeline.base.args import qpipeline_args
+from qpipeline.base.setup import set_environment
+from qpipeline.qunex_setup.study_setup import set_up_qunex_study
 
 
 def main():
