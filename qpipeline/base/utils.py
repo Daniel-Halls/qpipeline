@@ -101,3 +101,19 @@ def write_to_file(
         print(f"Unable to write to {file_path}/{name} due to :", e)
         return False
     return True
+
+
+def container_path() -> str:
+    """
+    Function to get container path
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    str: path
+       path to qunex container
+    """
+    return os.environ["QUNEXCONIMAGE"].rstrip()
