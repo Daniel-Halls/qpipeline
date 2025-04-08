@@ -40,7 +40,7 @@ def valid_options() -> list:
     list: list object
         list of valid option
     """
-    return ["setup"]
+    return ["setup", "structural"]
 
 
 def usage_message() -> None:
@@ -137,6 +137,7 @@ def qpipeline_modules() -> object:
     )
     subparsers = base_parser.add_subparsers(dest="command")
     hcp_setup_args(subparsers)
+    strucutral_commands(subparsers)
     return base_parser
 
 
@@ -147,7 +148,8 @@ def hcp_setup_args(args) -> dict:
 
     Parameters
     ----------
-    None
+    args: object
+        ArgParser object
 
     Returns
     -------
@@ -176,6 +178,54 @@ def hcp_setup_args(args) -> dict:
         dest="id",
         required=True,
     )
+
+
+def strucutral_commands(args) -> dict:
+    """
+    Function to take hcp set up
+    arguments
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    dict: dictionary
+        dict of cmd args
+    """
+    study_setup_args = args.add_parser(
+        "structural", 
+        help="To run pre-freesurfer/freesurfer/post freesurfer of HCP")
+    study_setup_args.add_argument(
+        "-s",
+        "--study_folder",
+        help="Path to study folder",
+        dest="study_folder",
+        required=True,
+    )
+    study_setup_args.add_argument(
+        "-r",
+        "--raw_data",
+        help="Path to raw data",
+        dest="raw_data",
+        required=True,
+    )
+    study_setup_args.add_argument(
+        "-i",
+        "--id",
+        help="Subject ID",
+        dest="id",
+        required=True,
+    )
+    study_setup_args.add_argument(
+        "-q",
+        "--queue",
+        help="Which queue to submit to",
+        dest="queue",
+        required=True,
+    )
+
 
 
 def qpipeline_args() -> dict:
