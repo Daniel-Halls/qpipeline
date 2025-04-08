@@ -194,31 +194,31 @@ def strucutral_commands(args) -> dict:
     dict: dictionary
         dict of cmd args
     """
-    study_setup_args = args.add_parser(
+    strucutral_args = args.add_parser(
         "structural", help="To run pre-freesurfer/freesurfer/post freesurfer of HCP"
     )
-    study_setup_args.add_argument(
+    strucutral_args.add_argument(
         "-s",
         "--study_folder",
         help="Path to study folder",
         dest="study_folder",
         required=True,
     )
-    study_setup_args.add_argument(
+    strucutralargs.add_argument(
         "-r",
         "--raw_data",
         help="Path to raw data",
         dest="raw_data",
         required=True,
     )
-    study_setup_args.add_argument(
+    strucutral_args.add_argument(
         "-i",
         "--id",
         help="Subject ID",
         dest="id",
         required=True,
     )
-    study_setup_args.add_argument(
+    strucutral_args.add_argument(
         "-q",
         "--queue",
         help="Which queue to submit to",
