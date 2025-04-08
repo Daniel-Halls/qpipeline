@@ -176,13 +176,6 @@ def hcp_setup_args(args) -> dict:
         dest="id",
         required=True,
     )
-    study_setup_args.add_argument(
-        "-q",
-        "--queue",
-        help="Queue name to submit to",
-        dest="queue",
-        required=True,
-    )
 
 
 def qpipeline_args() -> dict:

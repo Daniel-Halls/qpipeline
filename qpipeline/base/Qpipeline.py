@@ -15,6 +15,9 @@ class Qpipeline:
         pass
 
     def setup(self, **kwargs):
+        """
+        Set up function entry method
+        """
         from qpipeline.qunex_setup.study_setup import set_up_qunex_study
 
         set_up_qunex_study(kwargs)
@@ -23,10 +26,6 @@ class Qpipeline:
         """
         Method to determine what part of the pipeline
         should be ran based on user input
-
-        Parameters
-        ----------
-
         """
         func = getattr(self, command)
         func(**{key: value for key, value in args.items() if key != "command"})

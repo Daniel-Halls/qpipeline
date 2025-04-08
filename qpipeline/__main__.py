@@ -5,7 +5,6 @@ from qpipeline.base.Qpipeline import Qpipeline
 
 def main():
     args = qpipeline_args()
-    print(args)
     set_environment()
     pipeline = Qpipeline()
     pipeline.qpipeline_handler(args["command"], args)
