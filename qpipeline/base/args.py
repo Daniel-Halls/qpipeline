@@ -204,7 +204,7 @@ def strucutral_commands(args) -> dict:
         dest="study_folder",
         required=True,
     )
-    strucutralargs.add_argument(
+    strucutral_args.add_argument(
         "-r",
         "--raw_data",
         help="Path to raw data",
