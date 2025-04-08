@@ -1,8 +1,5 @@
-import os
-import shutil
-from pathlib import Path
-from .utils import run_cmd, write_to_file
-from .qunex_commands import (
+from qpipeline.base.utils import run_cmd, write_to_file
+from qpipeline.qunex_setup.qunex_commands import (
     create_study,
     import_data,
     create_session_info,
@@ -10,6 +7,9 @@ from .qunex_commands import (
     set_up_hcp,
 )
 import re
+import os
+import shutil
+from pathlib import Path
 
 
 def map_files() -> dict:
@@ -78,7 +78,8 @@ def parse_output(output: str, study_path: str) -> None:
 
 def set_up_qunex_study(args: dict) -> None:
     """
-    Function for main set up quenx study
+    Main Function for setting
+    up quenx study.
 
     Parameters
     ----------
@@ -89,6 +90,7 @@ def set_up_qunex_study(args: dict) -> None:
     -------
     None
     """
+    print(f"Setting up directory: {args['id']}")
     qunex_con_image = os.environ["QUNEXCONIMAGE"].rstrip()
     study_create = create_study(args["study_folder"], qunex_con_image, args["id"])
     run_cmd(study_create, no_return=True)
@@ -103,7 +105,7 @@ def set_up_qunex_study(args: dict) -> None:
     )
     run_cmd(ses_info, no_return=True)
     shutil.copy(
-        os.path.join(Path(__file__).parent, "files", "hcp_batch.txt"),
+        os.path.join(os.path.dirname(Path(__file__).parent), "files", "hcp_batch.txt"),
         args["study_folder"],
     )
     batch = create_batch(
@@ -120,4 +122,4 @@ def set_up_qunex_study(args: dict) -> None:
     run_cmd(hcp_setup, no_return=True)
     os.remove(os.path.join(args["study_folder"], "hcp_batch.txt"))
     os.remove(os.path.join(args["study_folder"], "hcp_mapping_file.txt"))
-    print(f"Finished setting up directory {args['id']}")
+    print(f"Finished setting up directory: {args['id']}")

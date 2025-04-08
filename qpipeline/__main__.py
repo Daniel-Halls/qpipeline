@@ -1,15 +1,14 @@
-from .args import qpipeline_args
-from .setup import set_environment
-from .study_setup import set_up_qunex_study
+from qpipeline.base.args import qpipeline_args
+from qpipeline.base.setup import set_environment
+from qpipeline.base.Qpipeline import Qpipeline
 
 
 def main():
-    arg = qpipeline_args()
+    args = qpipeline_args()
     set_environment()
-    if not arg["skip_study_setup"]:
-        print("\nSetting up qunex study")
-        print("-" * 100)
-        set_up_qunex_study(arg)
+    pipeline = Qpipeline()
+    pipeline.qpipeline_handler(args["command"], args)
+    exit()
 
 
 if __name__ == "__main__":
