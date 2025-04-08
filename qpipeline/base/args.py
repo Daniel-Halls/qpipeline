@@ -205,11 +205,12 @@ def strucutral_commands(args) -> dict:
         required=True,
     )
     strucutral_args.add_argument(
-        "-r",
-        "--raw_data",
-        help="Path to raw data",
-        dest="raw_data",
-        required=True,
+        "-F",
+        "--FLAIR",
+        help="Is T2 a FLAIR image",
+        dest="flair",
+        action="store_true",
+        default=False,
     )
     strucutral_args.add_argument(
         "-i",

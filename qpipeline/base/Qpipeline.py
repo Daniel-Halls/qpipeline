@@ -22,6 +22,14 @@ class Qpipeline:
 
         set_up_qunex_study(kwargs)
 
+    def structural(self, **kwargs):
+        """
+        Strucutral entry method
+        """
+        from qpipeline.structural.run_structural import hcp_structual
+
+        hcp_structual(kwargs)
+
     def qpipeline_handler(self, command: str, args: str):
         """
         Method to determine what part of the pipeline
