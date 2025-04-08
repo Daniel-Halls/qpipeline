@@ -1,4 +1,4 @@
-from qpipeline.base.utils import container_path
+from qpipeline.base.utils import container_path, run_cmd
 from qpipeline.structural.structural_commands import pre_freesurfer
 
 
@@ -21,4 +21,5 @@ def prefreesurfer(args: dict) -> None:
     prefreesurfer_command = pre_freesurfer(
         args["study_folder"], args["id"], qunex_con_image, args["queue"]
     )
-    print(prefreesurfer_command)
+    command = run_cmd(prefreesurfer_command)
+    print(command)
