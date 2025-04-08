@@ -195,8 +195,8 @@ def strucutral_commands(args) -> dict:
         dict of cmd args
     """
     study_setup_args = args.add_parser(
-        "structural", 
-        help="To run pre-freesurfer/freesurfer/post freesurfer of HCP")
+        "structural", help="To run pre-freesurfer/freesurfer/post freesurfer of HCP"
+    )
     study_setup_args.add_argument(
         "-s",
         "--study_folder",
@@ -225,7 +225,6 @@ def strucutral_commands(args) -> dict:
         dest="queue",
         required=True,
     )
-
 
 
 def qpipeline_args() -> dict:
