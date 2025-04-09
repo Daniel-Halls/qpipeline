@@ -169,3 +169,24 @@ def copy_files(srcfile: str, dest: str) -> None:
         shutil.copy2(srcfile, dest)
     except Exception as e:
         error_and_exit(False, f"Unable to copy {srcfile} to {dest} due to {e}")
+
+
+def delete_files_in_dir(path: str) -> None:
+    """
+    Function to delete all files in
+    a directory
+
+    Parameters
+    ----------
+    path: str
+        string of path
+
+    Returns
+    ------
+    None
+    """
+    try:
+        for files in os.listdir(path):
+            os.remove(files)
+    except Exception as e:
+        error_and_exit(f"Unable to delete files in {path} due to {e}")

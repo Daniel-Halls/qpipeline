@@ -1,4 +1,4 @@
-from qpipeline.base.utils import make_directory, run_cmd
+from qpipeline.base.utils import make_directory, run_cmd, error_and_exit
 from qpipeline.base.setup import load_module
 import os
 
@@ -17,9 +17,15 @@ def file_paths(study_folder: str, sub_id: str) -> dict:
     }
 
 
+def abletorun(T2path):
+    if "T2wToT1wDistortionCorrectAndReg" not in os.listdir(T2path):
+        error_and_exit(False, "Unable to continue with FLAIR pipeline as")
+
+
 def flair_pipeline(args):
     load_module("freesurfer-img/7.4.1")
     paths = file_paths(args["study_folder"], args["id"])
+    abletorun(paths["T2w"])
     make_directory(paths["qpipeline"])
     run_cmd(
         [
