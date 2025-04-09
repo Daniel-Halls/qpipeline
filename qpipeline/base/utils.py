@@ -1,6 +1,7 @@
 import subprocess
 import re
 import os
+import shutil
 
 
 def error_and_exit(
@@ -117,3 +118,54 @@ def container_path() -> str:
        path to qunex container
     """
     return os.environ["QUNEXCONIMAGE"].rstrip()
+
+
+def make_directory(
+    path: str, overwrite: bool = False, ignore_errors: bool = False
+) -> None:
+    """
+    Function to make a directory.
+    If error it will exit
+
+    Parameters
+    ----------
+    path: str
+        string to directory path
+    overwrite: bool
+        overwrite any previous directories
+
+    Returns
+    -------
+    None
+    """
+
+    try:
+        if os.path.exists(path) and overwrite:
+            shutil.rmtree(path, ignore_errors=True)
+        os.mkdir(path)
+    except Exception as e:
+        if ignore_errors:
+            return None
+        error_and_exit(False, f"Unable to create directory due to {e}")
+
+
+def copy_files(srcfile: str, dest: str) -> None:
+    """
+    Fucntion to copy a file.
+    Will exit if error
+
+    Parameters
+    ----------
+    srcfile: str
+        file path to copy
+    dest: str
+        destination path
+
+    Returns
+    -------
+    None
+    """
+    try:
+        shutil.copy2(srcfile, dest)
+    except Exception as e:
+        error_and_exit(False, f"Unable to copy {srcfile} to {dest} due to {e}")

@@ -1,4 +1,5 @@
 from qpipeline.base.utils import container_path, run_cmd
+from qpipeline.structural.prefreesurfer.flair_reg import flair_pipeline
 
 
 def prefreesurfer(args: dict) -> None:
@@ -21,6 +22,8 @@ def prefreesurfer(args: dict) -> None:
         args["study_folder"], args["id"], qunex_con_image, args["queue"]
     )
     command = run_cmd(prefreesurfer_command)
+    if args["flair"]:
+        flair_pipeline(args)
 
 
 def pre_freesurfer(
