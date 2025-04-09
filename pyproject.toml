@@ -16,7 +16,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 keywords = ["qpipeline"]
-
+dependencies = [
+    'fslpy'
+]
 
 requires-python = ">=3.9"
 [project.optional-dependencies]
