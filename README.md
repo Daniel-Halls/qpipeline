@@ -15,6 +15,17 @@ It consists of the following subcommands:
     - setup (qunex folder HCP set up)
     - strucutral (pre-freesurfer, freesurfer, post-freesurfer)
 
+## Installation
+---------------------------------------------------------------------------
+At the moment this is very much a work in progress set of pipelines and will be updated a lot.
+Therefore to save having to keep installing it is probably best
+to install in editable mode.
+
+```
+git clone git@github.com:Daniel-Halls/qpipeline.git
+cd qpipeline
+pip install -e .
+```
 
 ## Setup
 ---------------------------------------------------------------------------
