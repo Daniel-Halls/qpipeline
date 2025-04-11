@@ -64,6 +64,7 @@ qunex/hcp pipelines to make it easier to use.
 
 It consists of the following subcommands:
     - setup (qunex folder HCP set up)
+    - strucutral (pre-freesurfer, freesurfer, post-freesurfer)
 
 run qpipeline sub_command --help for further info
     """)
