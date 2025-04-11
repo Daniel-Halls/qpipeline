@@ -40,7 +40,7 @@ def valid_options() -> list:
     list: list object
         list of valid option
     """
-    return ["setup", "structural"]
+    return ["setup", "structural", "diffusion"]
 
 
 def usage_message() -> None:
@@ -65,6 +65,7 @@ qunex/hcp pipelines to make it easier to use.
 It consists of the following subcommands:
     - setup (qunex folder HCP set up)
     - strucutral (pre-freesurfer, freesurfer, post-freesurfer)
+    - diffusion (HCP diffusion pipeline)
 
 run qpipeline sub_command --help for further info
     """)
@@ -192,12 +193,13 @@ def hcp_setup_args(args) -> dict:
 
 def strucutral_commands(args) -> dict:
     """
-    Function to take hcp set up
+    Function to take hcp structural
     arguments
 
     Parameters
     ----------
-    None
+    args: object
+        ArgParser object
 
     Returns
     -------
@@ -215,14 +217,6 @@ def strucutral_commands(args) -> dict:
         required=True,
     )
     strucutral_args.add_argument(
-        "-F",
-        "--FLAIR",
-        help="Is T2 a FLAIR image",
-        dest="flair",
-        action="store_true",
-        default=False,
-    )
-    strucutral_args.add_argument(
         "-i",
         "--id",
         help="Subject ID",
@@ -235,6 +229,61 @@ def strucutral_commands(args) -> dict:
         help="""Which queue to submit to. 
         Leave this as none if not running on cluster""",
         dest="queue",
+    )
+    strucutral_args.add_argument(
+        "-F",
+        "--FLAIR",
+        help="Is T2 a FLAIR image",
+        dest="flair",
+        action="store_true",
+        default=False,
+    )
+
+
+def diffusion_commands(args) -> dict:
+    """
+    Function to take hcp diffusion
+    arguments
+
+    Parameters
+    ----------
+    args: object
+        ArgParser object
+
+    Returns
+    -------
+    dict: dictionary
+        dict of cmd args
+    """
+    diffusion_args = args.add_parser("diffusion", help="To run HCP diffusion pipeline")
+    diffusion_args.add_argument(
+        "-s",
+        "--study_folder",
+        help="Path to study folder",
+        dest="study_folder",
+        required=True,
+    )
+    diffusion_args.add_argument(
+        "-i",
+        "--id",
+        help="Subject ID",
+        dest="id",
+        required=True,
+    )
+    diffusion_args.add_argument(
+        "-q",
+        "--queue",
+        help="""Which queue to submit to. 
+        Leave this as none if not running on cluster""",
+        dest="queue",
+    )
+    diffusion_args.add_argument(
+        "-N",
+        "--no_gpu",
+        help="Don't use eddy GPU",
+        dest="no_gpu",
+        action="store_true",
+        default=False,
     )
 
 

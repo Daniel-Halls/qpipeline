@@ -2,7 +2,7 @@ from qpipeline.base.utils import container_path, run_cmd
 
 
 def diffusion_cmd(
-    study_folder: str, sub_id: str, qunex_con_image: str, queue: str
+    study_folder: str, sub_id: str, qunex_con_image: str, queue: str, no_gpu: bool
 ) -> str:
     """
     Diffusion qunex cmd
@@ -16,8 +16,14 @@ def diffusion_cmd(
     qunex_con_image: str
         Container path.
     queue: str
-        Cluster queue.
+        Cluster queue
+    no_gpu: bool
+        Don't use gpu
 
+    Returns
+    -------
+    cmd: str
+        str of cmd
     """
 
     cmd = f"""qunex_container hcp_diffusion \\
@@ -26,6 +32,8 @@ def diffusion_cmd(
       --batchfile={study_folder}/{sub_id}/processing/batch.txt \\
       --container={qunex_con_image} \\
       --overwrite=yes"""
+    if no_gpu:
+        cmd += " \\\n      --hcp_dwi_nogpu"
     if queue:
         cmd += f""" \\
       --bash_pre="module load qunex-img/0.100.0;module load cuda-img/9.1" \\
@@ -35,6 +43,18 @@ def diffusion_cmd(
 
 
 def run_diffusion(args: dict) -> None:
+    """
+    Main function to run diffusion pipeline
+
+    Parameters
+    ----------
+    args: dict
+        cmd line args
+
+    Returns
+    -------
+    None
+    """
     print(f"Running Diffusion pipeline on: {args['id']}")
     qunex_con_image = container_path()
     diff_cmd = diffusion_cmd(
@@ -42,6 +62,7 @@ def run_diffusion(args: dict) -> None:
         sub_id=args["id"],
         qunex_con_image=qunex_con_image,
         queue=args.get("queue", ""),
+        no_gpu=args["no_gpu"],
     )
     run_cmd(diff_cmd, no_return=True)
     if args["queue"]:
