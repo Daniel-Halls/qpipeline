@@ -1,6 +1,33 @@
 import subprocess
 import re
 import os
+import shutil
+import glob
+
+
+def annoying_error_str() -> str:
+    """
+    Function to return annoying error string
+    so it can be removed.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    error_str: str
+        str of error
+    """
+    return """
+    /bin/sh: which: line 1: syntax error: unexpected end of file
+    /bin/sh: error importing function definition for `which'
+    /bin/sh: module: line 1: syntax error: unexpected end of file
+    /bin/sh: error importing function definition for `module'
+    /bin/sh: ml: line 1: syntax error: unexpected end of file
+    /bin/sh: error importing function definition for `ml'
+    
+    """
 
 
 def error_and_exit(
@@ -26,7 +53,9 @@ def error_and_exit(
     """
     if not bool_statement:
         if error_message:
+            anoying_str = annoying_error_str()
             error_message = re.sub(r"\[Errno 2\]", "", error_message)
+            error_message = re.sub(anoying_str, "", error_message)
             print("\033[1;31m" + error_message + "\033[0;0m")
         print("Exiting...\n")
         exit(1)
@@ -101,3 +130,115 @@ def write_to_file(
         print(f"Unable to write to {file_path}/{name} due to :", e)
         return False
     return True
+
+
+def container_path() -> str:
+    """
+    Function to get container path
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    str: path
+       path to qunex container
+    """
+    return os.environ["QUNEXCONIMAGE"].rstrip()
+
+
+def make_directory(
+    path: str, overwrite: bool = False, ignore_errors: bool = False
+) -> None:
+    """
+    Function to make a directory.
+    If error it will exit
+
+    Parameters
+    ----------
+    path: str
+        string to directory path
+    overwrite: bool
+        overwrite any previous directories
+
+    Returns
+    -------
+    None
+    """
+
+    try:
+        if os.path.exists(path) and overwrite:
+            shutil.rmtree(path, ignore_errors=True)
+        os.mkdir(path)
+    except Exception as e:
+        if ignore_errors:
+            return None
+        error_and_exit(False, f"Unable to create directory due to {e}")
+
+
+def copy_files(srcfile: str, dest: str) -> None:
+    """
+    Fucntion to copy a file.
+    Will exit if error
+
+    Parameters
+    ----------
+    srcfile: str
+        file path to copy
+    dest: str
+        destination path
+
+    Returns
+    -------
+    None
+    """
+    try:
+        shutil.copy2(srcfile, dest)
+    except Exception as e:
+        error_and_exit(False, f"Unable to copy {srcfile} to {dest} due to {e}")
+
+
+def delete_files_in_dir(path: str) -> None:
+    """
+    Function to delete all files in
+    a directory
+
+    Parameters
+    ----------
+    path: str
+        string of path
+
+    Returns
+    ------
+    None
+    """
+    try:
+        for files in os.listdir(path):
+            os.remove(files)
+    except Exception as e:
+        error_and_exit(f"Unable to delete files in {path} due to {e}")
+
+
+def has_qunex_run_sucessfully(sub_dir: str, command_ran: str) -> None:
+    """
+    Function to check qunex log files
+    to check that a given command has run sucesfully
+
+    Parameters
+    ----------
+    sub_dir: str
+        path to qunex sub directory
+    command_ran: str
+        what command to check for
+
+    Returns
+    -------
+    None
+    """
+    logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
+    log_file = glob.glob(os.path.join(logs_directory, f"done_hcp_{command_ran}*"))
+    if not log_file:
+        error_and_exit(
+            False, f"Qunex {command_ran} not run sucessfully. Please check log files"
+        )

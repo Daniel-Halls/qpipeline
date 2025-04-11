@@ -1,4 +1,4 @@
-from qpipeline.base.utils import run_cmd, write_to_file
+from qpipeline.base.utils import run_cmd, write_to_file, container_path
 from qpipeline.qunex_setup.qunex_commands import (
     create_study,
     import_data,
@@ -91,7 +91,7 @@ def set_up_qunex_study(args: dict) -> None:
     None
     """
     print(f"Setting up directory: {args['id']}")
-    qunex_con_image = os.environ["QUNEXCONIMAGE"].rstrip()
+    qunex_con_image = container_path()
     study_create = create_study(args["study_folder"], qunex_con_image, args["id"])
     run_cmd(study_create, no_return=True)
     data_importing = import_data(
@@ -104,8 +104,14 @@ def set_up_qunex_study(args: dict) -> None:
         args["study_folder"], qunex_con_image, args["id"], session_id
     )
     run_cmd(ses_info, no_return=True)
+    if args["batch"]:
+        batch_path = args["batch"]
+    else:
+        batch_path = os.path.join(
+            os.path.dirname(Path(__file__).parent), "files", "hcp_batch.txt"
+        )
     shutil.copy(
-        os.path.join(os.path.dirname(Path(__file__).parent), "files", "hcp_batch.txt"),
+        batch_path,
         args["study_folder"],
     )
     batch = create_batch(

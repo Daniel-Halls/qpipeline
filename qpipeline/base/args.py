@@ -40,7 +40,7 @@ def valid_options() -> list:
     list: list object
         list of valid option
     """
-    return ["setup"]
+    return ["setup", "structural"]
 
 
 def usage_message() -> None:
@@ -64,6 +64,7 @@ qunex/hcp pipelines to make it easier to use.
 
 It consists of the following subcommands:
     - setup (qunex folder HCP set up)
+    - strucutral (pre-freesurfer, freesurfer, post-freesurfer)
 
 run qpipeline sub_command --help for further info
     """)
@@ -137,6 +138,7 @@ def qpipeline_modules() -> object:
     )
     subparsers = base_parser.add_subparsers(dest="command")
     hcp_setup_args(subparsers)
+    strucutral_commands(subparsers)
     return base_parser
 
 
@@ -147,7 +149,8 @@ def hcp_setup_args(args) -> dict:
 
     Parameters
     ----------
-    None
+    args: object
+        ArgParser object
 
     Returns
     -------
@@ -175,6 +178,63 @@ def hcp_setup_args(args) -> dict:
         help="Subject ID",
         dest="id",
         required=True,
+    )
+    study_setup_args.add_argument(
+        "-b",
+        "--batch",
+        help="""
+        Full path to a batch file with parameters for the hcp pipeline. 
+        Will default to a HCP batch file if not given. Must be called hcp_batch.txt""",
+        dest="batch",
+        default=False,
+    )
+
+
+def strucutral_commands(args) -> dict:
+    """
+    Function to take hcp set up
+    arguments
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    dict: dictionary
+        dict of cmd args
+    """
+    strucutral_args = args.add_parser(
+        "structural", help="To run pre-freesurfer/freesurfer/post freesurfer of HCP"
+    )
+    strucutral_args.add_argument(
+        "-s",
+        "--study_folder",
+        help="Path to study folder",
+        dest="study_folder",
+        required=True,
+    )
+    strucutral_args.add_argument(
+        "-F",
+        "--FLAIR",
+        help="Is T2 a FLAIR image",
+        dest="flair",
+        action="store_true",
+        default=False,
+    )
+    strucutral_args.add_argument(
+        "-i",
+        "--id",
+        help="Subject ID",
+        dest="id",
+        required=True,
+    )
+    strucutral_args.add_argument(
+        "-q",
+        "--queue",
+        help="""Which queue to submit to. 
+        Leave this as none if not running on cluster""",
+        dest="queue",
     )
 
 
