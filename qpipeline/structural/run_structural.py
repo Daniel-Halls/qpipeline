@@ -1,4 +1,4 @@
-from qpipeline.structural.prefreesurfer.run_prefreesurfer import prefreesurfer
+from qpipeline.structural.run_prefreesurfer import prefreesurfer
 from qpipeline.base.cluster_support import wait_for_me
 from qpipeline.base.utils import has_qunex_run_sucessfully
 
