@@ -2,6 +2,7 @@ import subprocess
 import re
 import os
 import shutil
+import glob
 
 
 def error_and_exit(
@@ -190,3 +191,27 @@ def delete_files_in_dir(path: str) -> None:
             os.remove(files)
     except Exception as e:
         error_and_exit(f"Unable to delete files in {path} due to {e}")
+
+
+def has_qunex_run_sucessfully(sub_dir: str, command_ran: str) -> None:
+    """
+    Function to check qunex log files
+    to check that a given command has run sucesfully
+
+    Parameters
+    ----------
+    sub_dir: str
+        path to qunex sub directory
+    command_ran: str
+        what command to check for
+
+    Returns
+    -------
+    None
+    """
+    logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
+    log_file = glob.glob(os.path.join(logs_directory, f"done_hcp_{command_ran}*"))
+    if not log_file:
+        error_and_exit(
+            False, f"Qunex {command_ran} not run sucessfully. Please check log files"
+        )

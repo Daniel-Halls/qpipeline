@@ -232,9 +232,9 @@ def strucutral_commands(args) -> dict:
     strucutral_args.add_argument(
         "-q",
         "--queue",
-        help="Which queue to submit to",
+        help="""Which queue to submit to. 
+        Leave this as none if not running on cluster""",
         dest="queue",
-        required=True,
     )
 
 

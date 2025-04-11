@@ -15,13 +15,12 @@ def prefreesurfer(args: dict) -> None:
     -------
     None
     """
-    print(f"Ruuning PreFreesurfer on: {args['id']}")
+    print(f"Runing PreFreesurfer on: {args['id']}")
     qunex_con_image = container_path()
     prefreesurfer_command = pre_freesurfer(
         args["study_folder"], args["id"], qunex_con_image, args["queue"]
     )
-    command = run_cmd(prefreesurfer_command)
-    print(command)
+    return run_cmd(prefreesurfer_command)
 
 
 def pre_freesurfer(
@@ -46,14 +45,20 @@ def pre_freesurfer(
     -------
     None
     """
-    return [
+
+    prefreesurfer_cmd = [
         f"""qunex_container hcp_pre_freesurfer \\
       --bind={study_folder}:{study_folder} \\
       --sessionsfolder={study_folder}/{sub_id}/sessions \\
       --batchfile={study_folder}/{sub_id}/processing/batch.txt \\
       --container={qunex_con_image} \\
-      --overwrite=yes \\
-      --bash_pre="module load qunex-img/0.100.0;module load cuda-img/9.1" \\
-      --scheduler="SLURM,time=24:00:00,ntasks=1,cpus-per-task=1,mem-per-cpu=50000,partition={queue},qos=img,gres=gpu:1,jobname=qc-pre_freesurfer_{sub_id}"
-      """
+      --overwrite=yes"""
     ]
+    if queue:
+        prefreesurfer_cmd[0] = (
+            prefreesurfer_cmd[0]
+            + f""" \\
+            --bash_pre="module load qunex-img/0.100.0;module load cuda-img/9.1" \\
+            --scheduler="SLURM,time=24:00:00,ntasks=1,cpus-per-task=1,mem-per-cpu=50000,partition={queue},qos=img,gres=gpu:1,jobname=qc-pre_freesurfer_{sub_id}" """
+        )
+    return prefreesurfer_cmd
