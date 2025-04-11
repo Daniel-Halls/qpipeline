@@ -62,19 +62,12 @@ class Queue_Monitoring:
         spinner_thread.start()
 
         try:
-            completed_jobs = []
             time.sleep(100)
             while True:
-                for job in job_id:
-                    if job not in completed_jobs:
-                        running = self.__check_job(job)
-                        if not running:
-                            completed_jobs.append(job)
-
-                    if len(completed_jobs) == len(job_id):
-                        print("All jobs have finihsed")
-                        break
-                    time.sleep(300)
+                running = self.__check_job(job_id)
+                if not running:
+                    break
+                time.sleep(300)
 
         except KeyboardInterrupt:
             exit(0)
@@ -123,7 +116,7 @@ class Queue_Monitoring:
             or False if completed.
         """
         output = run_cmd(
-            [os.path.join(os.environ["FSLDIR"], "bin", "fsl_sub_report"), job_id]
+            [f"{os.path.join(os.environ['FSLDIR'], 'bin', 'fsl_sub_report')} {job_id}"]
         )
         if "Finished" in output["stdout"]:
             return False
@@ -149,4 +142,4 @@ def wait_for_me(command_output: str) -> None:
     """
     job_id = get_job_id(command_output)
     queue = Queue_Monitoring()
-    queue.monitor([job_id])
+    queue.monitor(job_id)

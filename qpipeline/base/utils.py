@@ -5,6 +5,31 @@ import shutil
 import glob
 
 
+def annoying_error_str() -> str:
+    """
+    Function to return annoying error string
+    so it can be removed.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    error_str: str
+        str of error
+    """
+    return """
+    /bin/sh: which: line 1: syntax error: unexpected end of file
+    /bin/sh: error importing function definition for `which'
+    /bin/sh: module: line 1: syntax error: unexpected end of file
+    /bin/sh: error importing function definition for `module'
+    /bin/sh: ml: line 1: syntax error: unexpected end of file
+    /bin/sh: error importing function definition for `ml'
+    
+    """
+
+
 def error_and_exit(
     bool_statement: bool,
     error_message: str = None,
@@ -28,7 +53,9 @@ def error_and_exit(
     """
     if not bool_statement:
         if error_message:
+            anoying_str = annoying_error_str()
             error_message = re.sub(r"\[Errno 2\]", "", error_message)
+            error_message = re.sub(anoying_str, "", error_message)
             print("\033[1;31m" + error_message + "\033[0;0m")
         print("Exiting...\n")
         exit(1)
