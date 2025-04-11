@@ -102,7 +102,7 @@ class Queue_Monitoring:
                     adding_hash = True
 
             print(
-                f"{self.__col['deep_pink']}\033[1B\r{hash_line.ljust(max_hashes)}\033[1A{self.__col['reset']}",
+                f"\033[1B\r{hash_line.ljust(max_hashes)}\033[1A",
                 end="",
             )
             time.sleep(0.1)
@@ -133,7 +133,20 @@ class Queue_Monitoring:
         return True
 
 
-def wait_for_me(command_output):
+def wait_for_me(command_output: str) -> None:
+    """
+    Monitor the cluster for job status.
+
+    Parameters
+    ----------
+    command_output: str
+        output of qunex cmd
+
+    Returns
+    -------
+    None
+
+    """
     job_id = get_job_id(command_output)
     queue = Queue_Monitoring()
-    queue.monitor(job_id)
+    queue.monitor([job_id])
