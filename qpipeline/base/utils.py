@@ -3,6 +3,7 @@ import re
 import os
 import shutil
 import glob
+from qpipeline.base.signit import kill_group
 
 
 def annoying_error_str() -> str:
@@ -58,6 +59,7 @@ def error_and_exit(
             error_message = re.sub(anoying_str, "", error_message)
             print("\033[1;31m" + error_message + "\033[0;0m")
         print("Exiting...\n")
+        kill_group()
         exit(1)
 
 

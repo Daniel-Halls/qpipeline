@@ -13,7 +13,6 @@ class Signit_handler:
         self.register_handler()
         self.suppress_messages = False
 
-        # Make sure this process is its own process group leader
         os.setpgrp()
 
     def register_handler(self) -> None:
@@ -30,10 +29,7 @@ class Signit_handler:
         if not self.suppress_messages:
             print("\nReceived kill signal (Ctrl+C)")
 
-        try:
-            os.killpg(os.getpgrp(), signal.SIGTERM)
-        except Exception as e:
-            print(f"Error while killing process group: {e}", file=sys.stderr)
+        kill_group()
 
         if not self.suppress_messages:
             print("Exiting...")
@@ -47,3 +43,23 @@ class Signit_handler:
     @get_suppress_messages.setter
     def set_suppress_messages(self, value: bool) -> None:
         self.suppress_messages = value
+
+
+def kill_group() -> None:
+    """
+    Function to send a kill signal to all
+    child processes
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+    """
+    try:
+        pgid = os.getpgrp()
+        os.killpg(pgid, signal.SIGKILL)
+    except Exception as e:
+        print(f"Error while killing process group: {e}", file=sys.stderr)
