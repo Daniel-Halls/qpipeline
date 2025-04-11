@@ -42,7 +42,7 @@ def diffusion_cmd(
     return cmd
 
 
-def run_diffusion(args: dict) -> None:
+def hcp_diffusion(args: dict) -> None:
     """
     Main function to run diffusion pipeline
 

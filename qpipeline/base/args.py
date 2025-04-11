@@ -140,6 +140,7 @@ def qpipeline_modules() -> object:
     subparsers = base_parser.add_subparsers(dest="command")
     hcp_setup_args(subparsers)
     strucutral_commands(subparsers)
+    diffusion_commands(subparsers)
     return base_parser
 
 
