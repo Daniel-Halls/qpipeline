@@ -30,6 +30,14 @@ class Qpipeline:
 
         hcp_structual(kwargs)
 
+    def diffusion(self, **kwargs):
+        """
+        Diffusion entry method
+        """
+        from qpipeline.diffusion.diffusion_pipeline import hcp_diffusion
+
+        hcp_diffusion(kwargs)
+
     def qpipeline_handler(self, command: str, args: str):
         """
         Method to determine what part of the pipeline

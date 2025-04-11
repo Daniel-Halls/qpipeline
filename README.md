@@ -59,3 +59,20 @@ options:
                         Which queue to submit to. Leave this as none if not running on cluster
 
 ```
+
+## HCP Diffusion pipeline
+---------------------------
+This is to runs the HCP diffusion pipeline
+
+```
+usage: qpipeline diffusion [-h] -s STUDY_FOLDER -i ID [-q QUEUE] [-N]
+
+options:
+  -h, --help            show this help message and exit
+  -s STUDY_FOLDER, --study_folder STUDY_FOLDER
+                        Path to study folder
+  -i ID, --id ID        Subject ID
+  -q QUEUE, --queue QUEUE
+                        Which queue to submit to. Leave this as none if not running on cluster
+  -N, --no_gpu          Don't use eddy GPU
+```

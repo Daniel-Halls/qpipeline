@@ -78,6 +78,6 @@ def build_structural_cmd(
     if queue:
         cmd += f""" \\
       --bash_pre="module load qunex-img/0.100.0;module load cuda-img/9.1" \\
-      --scheduler="SLURM,time=24:00:00,ntasks=1,cpus-per-task=1,mem-per-cpu=50000,partition={queue},qos=img,gres=gpu:1,jobname=qc-{stage}_{sub_id}" """
+      --scheduler="SLURM,time=24:00:00,ntasks=1,cpus-per-task=1,mem-per-cpu=50000,partition={queue},qos=img,gres=gpu:1,jobname={stage}_{sub_id}" """
 
     return cmd
