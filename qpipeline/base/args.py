@@ -162,14 +162,19 @@ def default_args(args: object) -> None:
         "--study_folder",
         help="Path to study folder",
         dest="study_folder",
-        required=True,
     )
     args.add_argument(
         "-i",
         "--subject_id",
         help="Subject ID",
         dest="id",
-        required=True,
+    )
+    args.add_argument(
+        "-L",
+        "--Load_env",
+        help="""Use this option to load qunex enviorment (currently only works on nottingham cluster)""",
+        dest="load",
+        action="store_true",
     )
 
 
@@ -204,7 +209,6 @@ def hcp_setup_args(args) -> dict:
         Full path to a batch file with parameters for the hcp pipeline. 
         Will default to a HCP batch file if not given. Must be called hcp_batch.txt""",
         dest="batch",
-        default=False,
     )
 
 
