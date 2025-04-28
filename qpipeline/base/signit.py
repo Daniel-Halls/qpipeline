@@ -30,10 +30,6 @@ class Signit_handler:
             print("\nReceived kill signal (Ctrl+C)")
 
         kill_group()
-
-        if not self.suppress_messages:
-            print("Exiting...")
-
         sys.exit(0)
 
     @property

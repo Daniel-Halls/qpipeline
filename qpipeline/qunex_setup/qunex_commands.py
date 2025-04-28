@@ -27,7 +27,10 @@ def create_study(study_folder: str, qunex_con_image: str, sub_id: str) -> list:
 
 
 def import_data(
-    study_folder: str, qunex_con_image: str, sub_id: str, raw_data: str
+    study_folder: str,
+    qunex_con_image: str,
+    sub_id: str,
+    raw_data: str,
 ) -> list:
     """
     Function for the qunex import bids command

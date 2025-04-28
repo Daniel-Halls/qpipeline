@@ -222,7 +222,9 @@ def delete_files_in_dir(path: str) -> None:
         error_and_exit(f"Unable to delete files in {path} due to {e}")
 
 
-def has_qunex_run_sucessfully(sub_dir: str, command_ran: str) -> None:
+def has_qunex_run_sucessfully(
+    sub_dir: str, command_ran: str, setup_check: bool = False
+) -> None:
     """
     Function to check qunex log files
     to check that a given command has run sucesfully
@@ -239,8 +241,27 @@ def has_qunex_run_sucessfully(sub_dir: str, command_ran: str) -> None:
     None
     """
     logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
-    log_file = glob.glob(os.path.join(logs_directory, f"done_hcp_{command_ran}*"))
+    log_name = f"done_hcp_{command_ran}" if not setup_check else f"done_{command_ran}"
+    log_file = glob.glob(os.path.join(logs_directory, f"{log_name}*"))
     if not log_file:
         error_and_exit(
-            False, f"Qunex {command_ran} not run sucessfully. Please check log files"
+            False,
+            f"Qunex {command_ran} not run sucessfully. Please check log files at {logs_directory}",
         )
+
+
+def remove_folder(folder_path: str) -> None:
+    """
+    Function to remove folder
+
+    Parameters
+    ----------
+    folder_path: str
+        path to folder
+
+    Returns
+    -------
+    None
+    """
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)
