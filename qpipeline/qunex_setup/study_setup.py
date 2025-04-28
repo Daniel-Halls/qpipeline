@@ -99,7 +99,9 @@ def set_up_qunex_study(args: dict) -> None:
     )
     import_data_output = run_cmd(data_importing)
     parse_output(import_data_output["stdout"], args["study_folder"])
-    session_id = re.sub("sub-", "", args["id"]) if not args['session_id'] else args['session_id']
+    session_id = (
+        re.sub("sub-", "", args["id"]) if not args["session_id"] else args["session_id"]
+    )
     ses_info = create_session_info(
         args["study_folder"], qunex_con_image, args["id"], args["session_id"]
     )

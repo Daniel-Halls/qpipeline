@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+
 def splash() -> str:
     """
     Function to return Splash
@@ -140,8 +141,8 @@ def qpipeline_modules() -> object:
     hcp_setup_args(subparsers)
     strucutral_commands(subparsers)
     diffusion_commands(subparsers)
-    no_args(subparsers)
     return base_parser
+
 
 def default_args(args: object) -> None:
     """
@@ -151,7 +152,7 @@ def default_args(args: object) -> None:
     ----------
     args: object
         ArgParser object
-    
+
     Returns
     -------
     None
@@ -240,12 +241,8 @@ def strucutral_commands(args) -> dict:
         dest="queue",
     )
     strucutral_args.add_argument(
-        "-F",
-        "--FLAIR",
-        help="Is T2 a FLAIR image",
-        dest="flair",
-        action="store_true"
-        )
+        "-F", "--FLAIR", help="Is T2 a FLAIR image", dest="flair", action="store_true"
+    )
 
 
 def diffusion_commands(args) -> dict:
