@@ -66,7 +66,6 @@ def check_input(args: dict) -> None:
     )
     paths_to_check = {key: args[key] for key in subselect_keys if key in subselect_keys}
     args = make_paths_absolute(args, list(paths_to_check.keys()))
-    breakpoint()
     check_folders_exist(list(paths_to_check.valeus()))
     if args["command"] == "setup":
         check_bids_folder(args["raw_data"])
