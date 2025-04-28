@@ -1,4 +1,9 @@
-from qpipeline.base.utils import run_cmd, write_to_file, container_path
+from qpipeline.base.utils import (
+    run_cmd,
+    write_to_file,
+    container_path,
+    has_qunex_run_sucessfully,
+)
 from qpipeline.qunex_setup.qunex_commands import (
     create_study,
     import_data,
@@ -65,7 +70,9 @@ def parse_output(output: str, study_path: str) -> None:
     -------
     None
     """
-    pattern = re.compile(r"---> linked (\d+\.nii\.gz) <-- sub-[^_]+_(.*)\.nii\.gz")
+    pattern = re.compile(
+        r"---> linked (\d+\.nii\.gz) <-- sub-[^_]+_(?:ses-[^_]+_)?(.*)\.nii\.gz"
+    )
     mapped_files = {}
     file_mapping = map_files()
     for match in pattern.finditer(output):
@@ -92,20 +99,31 @@ def set_up_qunex_study(args: dict) -> None:
     """
     print(f"Setting up directory: {args['id']}")
     qunex_con_image = container_path()
+    subjects_folder = os.path.join(args["study_folder"], args["id"])
     study_create = create_study(args["study_folder"], qunex_con_image, args["id"])
     run_cmd(study_create, no_return=True)
-    data_importing = import_data(
-        args["study_folder"], qunex_con_image, args["id"], args["raw_data"]
-    )
-    import_data_output = run_cmd(data_importing)
-    parse_output(import_data_output["stdout"], args["study_folder"])
     session_id = (
         re.sub("sub-", "", args["id"]) if not args["session_id"] else args["session_id"]
     )
+    has_qunex_run_sucessfully(subjects_folder, "create_study", setup_check=True)
+    data_importing = import_data(
+        args["study_folder"],
+        qunex_con_image,
+        args["id"],
+        args["raw_data"],
+    )
+
+    session_id = (
+        re.sub("sub-", "", args["id"]) if not args["session_id"] else args["session_id"]
+    )
+    import_data_output = run_cmd(data_importing)
+    has_qunex_run_sucessfully(subjects_folder, "import_bids", setup_check=True)
+    parse_output(import_data_output["stdout"], args["study_folder"])
     ses_info = create_session_info(
-        args["study_folder"], qunex_con_image, args["id"], args["session_id"]
+        args["study_folder"], qunex_con_image, args["id"], session_id
     )
     run_cmd(ses_info, no_return=True)
+    has_qunex_run_sucessfully(subjects_folder, "create_session_info", setup_check=True)
     if args["batch"]:
         batch_path = args["batch"]
     else:
@@ -124,10 +142,12 @@ def set_up_qunex_study(args: dict) -> None:
         os.path.join(args["study_folder"], "hcp_batch.txt"),
     )
     run_cmd(batch, no_return=True)
+    has_qunex_run_sucessfully(subjects_folder, "create_batch", setup_check=True)
     hcp_setup = set_up_hcp(
         args["study_folder"], qunex_con_image, args["id"], session_id, args["raw_data"]
     )
     run_cmd(hcp_setup, no_return=True)
+    has_qunex_run_sucessfully(subjects_folder, "setup_hcp", setup_check=True)
     os.remove(os.path.join(args["study_folder"], "hcp_batch.txt"))
     os.remove(os.path.join(args["study_folder"], "hcp_mapping_file.txt"))
     print(f"Finished setting up directory: {args['id']}")
