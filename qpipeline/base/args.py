@@ -1,7 +1,6 @@
 import argparse
 import sys
 
-
 def splash() -> str:
     """
     Function to return Splash
@@ -141,7 +140,42 @@ def qpipeline_modules() -> object:
     hcp_setup_args(subparsers)
     strucutral_commands(subparsers)
     diffusion_commands(subparsers)
+    no_args(subparsers)
     return base_parser
+
+def default_args(args: object) -> None:
+    """
+    Function to add in default arguments
+
+    Parameters
+    ----------
+    args: object
+        ArgParser object
+    
+    Returns
+    -------
+    None
+    """
+    args.add_argument(
+        "-s",
+        "--study_folder",
+        help="Path to study folder",
+        dest="study_folder",
+        required=True,
+    )
+    args.add_argument(
+        "-p",
+        "--participant_id",
+        help="Subject ID",
+        dest="id",
+        required=True,
+    )
+    args.add_argument(
+        "-i",
+        "--session_id",
+        help="Session ID. If this is the same as the participant ID then can be left blank",
+        dest="session_id",
+    )
 
 
 def hcp_setup_args(args) -> dict:
@@ -160,25 +194,12 @@ def hcp_setup_args(args) -> dict:
         dict of cmd args
     """
     study_setup_args = args.add_parser("setup", help="Set up study")
-    study_setup_args.add_argument(
-        "-s",
-        "--study_folder",
-        help="Path to study folder",
-        dest="study_folder",
-        required=True,
-    )
+    default_args(study_setup_args)
     study_setup_args.add_argument(
         "-r",
         "--raw_data",
         help="Path to raw data",
         dest="raw_data",
-        required=True,
-    )
-    study_setup_args.add_argument(
-        "-i",
-        "--id",
-        help="Subject ID",
-        dest="id",
         required=True,
     )
     study_setup_args.add_argument(
@@ -210,20 +231,7 @@ def strucutral_commands(args) -> dict:
     strucutral_args = args.add_parser(
         "structural", help="To run pre-freesurfer/freesurfer/post freesurfer of HCP"
     )
-    strucutral_args.add_argument(
-        "-s",
-        "--study_folder",
-        help="Path to study folder",
-        dest="study_folder",
-        required=True,
-    )
-    strucutral_args.add_argument(
-        "-i",
-        "--id",
-        help="Subject ID",
-        dest="id",
-        required=True,
-    )
+    default_args(strucutral_args)
     strucutral_args.add_argument(
         "-q",
         "--queue",
@@ -236,9 +244,8 @@ def strucutral_commands(args) -> dict:
         "--FLAIR",
         help="Is T2 a FLAIR image",
         dest="flair",
-        action="store_true",
-        default=False,
-    )
+        action="store_true"
+        )
 
 
 def diffusion_commands(args) -> dict:
@@ -257,20 +264,7 @@ def diffusion_commands(args) -> dict:
         dict of cmd args
     """
     diffusion_args = args.add_parser("diffusion", help="To run HCP diffusion pipeline")
-    diffusion_args.add_argument(
-        "-s",
-        "--study_folder",
-        help="Path to study folder",
-        dest="study_folder",
-        required=True,
-    )
-    diffusion_args.add_argument(
-        "-i",
-        "--id",
-        help="Subject ID",
-        dest="id",
-        required=True,
-    )
+    default_args(diffusion_args)
     diffusion_args.add_argument(
         "-q",
         "--queue",
@@ -284,7 +278,6 @@ def diffusion_commands(args) -> dict:
         help="Don't use eddy GPU",
         dest="no_gpu",
         action="store_true",
-        default=False,
     )
 
 
