@@ -3,6 +3,8 @@ from qpipeline.base.utils import (
     write_to_file,
     container_path,
     has_qunex_run_sucessfully,
+    error_and_exit,
+    remove_folder,
 )
 from qpipeline.qunex_setup.qunex_commands import (
     create_study,
@@ -15,6 +17,39 @@ import re
 import os
 import shutil
 from pathlib import Path
+
+
+def get_session_id(session_folder):
+    """
+    Function to get session
+    id as qunex doesn't seem
+    to allow custom ids when
+    using bids......
+
+    Parameters
+    ----------
+    session_folder: str
+        string to session folder
+
+    Returns
+    -------
+    session_id: str
+        string of session id
+    """
+    qunex_stuff = ["archive", "specs", "QC", "inbox"]
+    session_folder_content = os.listdir(session_folder)
+    try:
+        session_id = [
+            sess_name
+            for sess_name in session_folder_content
+            if sess_name not in qunex_stuff
+        ][0]
+    except Exception:
+        error_and_exit(
+            False,
+            f"Cannot find session name. Please check name in {session_folder} and update mapping files",
+        )
+    return session_id
 
 
 def map_files() -> dict:
@@ -100,11 +135,9 @@ def set_up_qunex_study(args: dict) -> None:
     print(f"Setting up directory: {args['id']}")
     qunex_con_image = container_path()
     subjects_folder = os.path.join(args["study_folder"], args["id"])
+    remove_folder(subjects_folder)
     study_create = create_study(args["study_folder"], qunex_con_image, args["id"])
     run_cmd(study_create, no_return=True)
-    session_id = (
-        re.sub("sub-", "", args["id"]) if not args["session_id"] else args["session_id"]
-    )
     has_qunex_run_sucessfully(subjects_folder, "create_study", setup_check=True)
     data_importing = import_data(
         args["study_folder"],
@@ -113,12 +146,10 @@ def set_up_qunex_study(args: dict) -> None:
         args["raw_data"],
     )
 
-    session_id = (
-        re.sub("sub-", "", args["id"]) if not args["session_id"] else args["session_id"]
-    )
     import_data_output = run_cmd(data_importing)
     has_qunex_run_sucessfully(subjects_folder, "import_bids", setup_check=True)
     parse_output(import_data_output["stdout"], args["study_folder"])
+    session_id = get_session_id(os.path.join(subjects_folder, "sessions"))
     ses_info = create_session_info(
         args["study_folder"], qunex_con_image, args["id"], session_id
     )

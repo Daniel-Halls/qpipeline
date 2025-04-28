@@ -248,3 +248,20 @@ def has_qunex_run_sucessfully(
             False,
             f"Qunex {command_ran} not run sucessfully. Please check log files at {logs_directory}",
         )
+
+
+def remove_folder(folder_path: str) -> None:
+    """
+    Function to remove folder
+
+    Parameters
+    ----------
+    folder_path: str
+        path to folder
+
+    Returns
+    -------
+    None
+    """
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)

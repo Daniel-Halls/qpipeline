@@ -165,17 +165,11 @@ def default_args(args: object) -> None:
         required=True,
     )
     args.add_argument(
-        "-p",
-        "--participant_id",
+        "-i",
+        "--subject_id",
         help="Subject ID",
         dest="id",
         required=True,
-    )
-    args.add_argument(
-        "-i",
-        "--session_id",
-        help="Session ID. If this is the same as the participant ID then can be left blank",
-        dest="session_id",
     )
 
 
