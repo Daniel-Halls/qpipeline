@@ -8,8 +8,8 @@ from qpipeline.base.check_inputs import check_input
 def main():
     Signit_handler()
     args = qpipeline_args()
-    check_input(args)
-    if args["Load"]:
+    #check_input(args)
+    if args["load"]:
         set_environment()
     pipeline = Qpipeline()
     pipeline.qpipeline_handler(args["command"], args)

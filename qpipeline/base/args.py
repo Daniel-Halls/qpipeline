@@ -1,7 +1,6 @@
 import argparse
 import sys
 
-
 def splash() -> str:
     """
     Function to return Splash
@@ -291,5 +290,15 @@ def qpipeline_args() -> dict:
         dict of all args
     """
     check_subcommand()
-    args = qpipeline_modules()
-    return vars(args.parse_args())
+    parser = qpipeline_modules()
+    args = parser.parse_args()
+
+    # If no arguments after subcommand, show help for that subparser
+    if args.command == "setup" and len(sys.argv) <= 3:
+        parser.parse_args(["setup", "--help"])
+    if args.command == "structural" and len(sys.argv) <= 3:
+        parser.parse_args(["structural", "--help"])
+    if args.command == "diffusion" and len(sys.argv) <= 3:
+        parser.parse_args(["diffusion", "--help"])
+
+    return vars(args)

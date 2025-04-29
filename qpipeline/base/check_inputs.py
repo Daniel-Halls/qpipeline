@@ -107,7 +107,7 @@ def check_input(args: dict) -> None:
     check_complusory_arguments(args)
     folder_paths = (
         [args["study_folder"], args["raw_data"]]
-        if args["raw_data"]
+        if "raw_data" in args.keys()
         else args["study_folder"]
     )
     check_paths_absolute(folder_paths)
