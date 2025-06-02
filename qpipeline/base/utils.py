@@ -222,6 +222,19 @@ def delete_files_in_dir(path: str) -> None:
         error_and_exit(f"Unable to delete files in {path} due to {e}")
 
 
+def check_logs(
+    logs_directory: str, command_ran: str, setup_check: bool = False
+) -> list:
+    log_name = f"done_hcp_{command_ran}" if not setup_check else f"done_{command_ran}"
+    return glob.glob(os.path.join(logs_directory, f"{log_name}*"))
+
+
+def check_progress(sub_dir: str, command_ran):
+    logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
+    done = check_logs(logs_directory, command_ran)
+    return True if done else False
+
+
 def has_qunex_run_sucessfully(
     sub_dir: str, command_ran: str, setup_check: bool = False
 ) -> None:
@@ -241,9 +254,7 @@ def has_qunex_run_sucessfully(
     None
     """
     logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
-    log_name = f"done_hcp_{command_ran}" if not setup_check else f"done_{command_ran}"
-    log_file = glob.glob(os.path.join(logs_directory, f"{log_name}*"))
-    print(log_file)
+    log_file = check_logs(sub_dir, command_ran, setup_check)
     if not log_file:
         error_and_exit(
             False,
