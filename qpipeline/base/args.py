@@ -1,5 +1,6 @@
 import argparse
 import sys
+from qpipeline.base.check_inputs import valid_data_types
 
 
 def splash() -> str:
@@ -162,14 +163,19 @@ def default_args(args: object) -> None:
         "--study_folder",
         help="Path to study folder",
         dest="study_folder",
-        required=True,
     )
     args.add_argument(
         "-i",
         "--subject_id",
         help="Subject ID",
         dest="id",
-        required=True,
+    )
+    args.add_argument(
+        "-L",
+        "--Load_env",
+        help="""Use this option to load qunex enviorment (currently only works on nottingham cluster)""",
+        dest="load",
+        action="store_true",
     )
 
 
@@ -198,13 +204,22 @@ def hcp_setup_args(args) -> dict:
         required=True,
     )
     study_setup_args.add_argument(
+        "-d",
+        "--data_type",
+        help="""
+        Which type of data (HCP style or biobank) is being processed.
+        Either HCP or biobank (case insensitive)
+        """,
+        choices=valid_data_types(),
+        dest="data_type",
+    )
+    study_setup_args.add_argument(
         "-b",
         "--batch",
         help="""
-        Full path to a batch file with parameters for the hcp pipeline. 
-        Will default to a HCP batch file if not given. Must be called hcp_batch.txt""",
+        Full path to a custom batch file with parameters for the hcp pipeline. 
+        Must be called hcp_batch.txt""",
         dest="batch",
-        default=False,
     )
 
 
@@ -287,5 +302,15 @@ def qpipeline_args() -> dict:
         dict of all args
     """
     check_subcommand()
-    args = qpipeline_modules()
-    return vars(args.parse_args())
+    parser = qpipeline_modules()
+    args = parser.parse_args()
+
+    # If no arguments after subcommand, show help for that subparser
+    if args.command == "setup" and len(sys.argv) <= 3:
+        parser.parse_args(["setup", "--help"])
+    if args.command == "structural" and len(sys.argv) <= 3:
+        parser.parse_args(["structural", "--help"])
+    if args.command == "diffusion" and len(sys.argv) <= 3:
+        parser.parse_args(["diffusion", "--help"])
+
+    return vars(args)
