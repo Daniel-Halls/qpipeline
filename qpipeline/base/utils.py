@@ -243,6 +243,7 @@ def has_qunex_run_sucessfully(
     logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
     log_name = f"done_hcp_{command_ran}" if not setup_check else f"done_{command_ran}"
     log_file = glob.glob(os.path.join(logs_directory, f"{log_name}*"))
+    print(log_file)
     if not log_file:
         error_and_exit(
             False,
