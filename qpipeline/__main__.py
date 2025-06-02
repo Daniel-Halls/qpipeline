@@ -2,13 +2,23 @@ from qpipeline.base.args import qpipeline_args
 from qpipeline.base.setup import set_environment
 from qpipeline.base.Qpipeline import Qpipeline
 from qpipeline.base.signit import Signit_handler
-from qpipeline.base.check_inputs import check_input
 
 
-def main():
+def main() -> None:
+    """
+    Main function of qpipeline
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+    """
     Signit_handler()
     args = qpipeline_args()
-    #check_input(args)
+    # check_input(args)
     if args["load"]:
         set_environment()
     pipeline = Qpipeline()

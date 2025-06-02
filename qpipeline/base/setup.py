@@ -77,4 +77,5 @@ def set_environment():
     None
     """
     load_module("extension/imaging")
+    load_module("fsl-img")
     load_module("qunex-img/0.100.0")

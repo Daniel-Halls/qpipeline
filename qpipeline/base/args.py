@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+
 def splash() -> str:
     """
     Function to return Splash
@@ -23,6 +24,10 @@ def splash() -> str:
     |__||__|        |__|         \/                \/      \/ 
 {"-" * 75}    
     """
+
+
+def valid_data_types():
+    return ["hcp", "biobank"]
 
 
 def valid_options() -> list:
@@ -202,11 +207,21 @@ def hcp_setup_args(args) -> dict:
         required=True,
     )
     study_setup_args.add_argument(
+        "-d",
+        "--data_type",
+        help="""
+        Which type of data (HCP style or biobank) is being processed.
+        Either HCP or biobank (case insensitive)
+        """,
+        choices=valid_data_types(),
+        dest="data_type",
+    )
+    study_setup_args.add_argument(
         "-b",
         "--batch",
         help="""
-        Full path to a batch file with parameters for the hcp pipeline. 
-        Will default to a HCP batch file if not given. Must be called hcp_batch.txt""",
+        Full path to a custom batch file with parameters for the hcp pipeline. 
+        Must be called hcp_batch.txt""",
         dest="batch",
     )
 

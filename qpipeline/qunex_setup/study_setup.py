@@ -118,6 +118,29 @@ def parse_output(output: str, study_path: str) -> None:
     write_to_file(study_path, "hcp_mapping_file.txt", result, text_is_list=True)
 
 
+def batch_file(data_type: str, study_path: str, customse_batch: bool = False) -> None:
+    """
+    Function to process batch file
+    """
+    if customse_batch:
+        batch_path = customse_batch
+    else:
+        batch_path = os.path.join(
+            os.path.dirname(Path(__file__).parent),
+            "files",
+            f"{data_type.lower()}_data_batch.txt",
+        )
+    shutil.copy(batch_path, os.path.join(study_path, "hcp_batch.txt"))
+
+
+def datatype_checker(data_type, customse_batch: bool = False) -> str:
+    if customse_batch:
+        return "Custom"
+    if data_type:
+        return data_type.lower()
+    return None
+
+
 def set_up_qunex_study(args: dict) -> None:
     """
     Main Function for setting
@@ -132,7 +155,14 @@ def set_up_qunex_study(args: dict) -> None:
     -------
     None
     """
-    print(f"Setting up directory: {args['id']}")
+    datatype = datatype_checker(args["data_type"], args["batch"])
+    if not datatype:
+        error_and_exit(
+            False,
+            "Please provide iether datatype --data_type {hcp,biobank} or custom batch with --batch",
+        )
+    print(f"Setting up Subject: {args['id']}")
+    print(f"Data type {datatype}")
     qunex_con_image = container_path()
     subjects_folder = os.path.join(args["study_folder"], args["id"])
     remove_folder(subjects_folder)
@@ -155,16 +185,7 @@ def set_up_qunex_study(args: dict) -> None:
     )
     run_cmd(ses_info, no_return=True)
     has_qunex_run_sucessfully(subjects_folder, "create_session_info", setup_check=True)
-    if args["batch"]:
-        batch_path = args["batch"]
-    else:
-        batch_path = os.path.join(
-            os.path.dirname(Path(__file__).parent), "files", "hcp_batch.txt"
-        )
-    shutil.copy(
-        batch_path,
-        args["study_folder"],
-    )
+    batch_file(datatype, args["study_folder"], args["batch"])
     batch = create_batch(
         args["study_folder"],
         qunex_con_image,
