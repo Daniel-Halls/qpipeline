@@ -1,5 +1,6 @@
 import argparse
 import sys
+from qpipeline.base.check_inputs import valid_data_types
 
 
 def splash() -> str:
@@ -24,10 +25,6 @@ def splash() -> str:
     |__||__|        |__|         \/                \/      \/ 
 {"-" * 75}    
     """
-
-
-def valid_data_types():
-    return ["hcp", "biobank"]
 
 
 def valid_options() -> list:
