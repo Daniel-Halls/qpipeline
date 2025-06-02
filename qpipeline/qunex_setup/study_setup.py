@@ -118,9 +118,23 @@ def parse_output(output: str, study_path: str) -> None:
     write_to_file(study_path, "hcp_mapping_file.txt", result, text_is_list=True)
 
 
-def batch_file(data_type: str, study_path: str, customse_batch: bool = False) -> None:
+def batch_file(data_type: str, study_path: str, customse_batch: str = None) -> None:
     """
     Function to process batch file
+
+    Parameters
+    ----------
+    data_type: str
+        str of datatype the input
+    study_path: str
+        str of path to study path
+    customse_batch: str
+        str of custom batch.
+        Default is None
+
+    Returns
+    -------
+    None
     """
     if customse_batch:
         batch_path = customse_batch
@@ -133,7 +147,26 @@ def batch_file(data_type: str, study_path: str, customse_batch: bool = False) ->
     shutil.copy(batch_path, os.path.join(study_path, "hcp_batch.txt"))
 
 
-def datatype_checker(data_type, customse_batch: bool = False) -> str:
+def datatype_checker(data_type: str, customse_batch: str = None) -> str:
+    """
+    Function to check what type of
+    batch file to use.
+
+    Parameters
+    ----------
+    data_type: str
+        str of datatype the input
+        data is
+    customse_batch: str
+        str of custom batch.
+        Default is None
+
+    Returns
+    -------
+    str: string object
+        str of data type to process
+
+    """
     if customse_batch:
         return "Custom"
     if data_type:
@@ -156,13 +189,9 @@ def set_up_qunex_study(args: dict) -> None:
     None
     """
     datatype = datatype_checker(args["data_type"], args["batch"])
-    if not datatype:
-        error_and_exit(
-            False,
-            "Please provide iether datatype --data_type {hcp,biobank} or custom batch with --batch",
-        )
+    error_and_exit(datatype, "Unable to work out how to process batch file")
     print(f"Setting up Subject: {args['id']}")
-    print(f"Data type {datatype}")
+    print(f"Data type: {datatype}")
     qunex_con_image = container_path()
     subjects_folder = os.path.join(args["study_folder"], args["id"])
     remove_folder(subjects_folder)
