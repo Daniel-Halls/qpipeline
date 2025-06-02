@@ -174,6 +174,215 @@ def datatype_checker(data_type: str, customse_batch: str = None) -> str:
     return None
 
 
+def data_check(data_type: str, batch: str) -> str:
+    """
+    Function to check data to decide on
+    which batch to use
+
+    Parameters
+    ----------
+    data_type: str
+        string of data type.
+        Can be none, however
+        then needs batch
+    batch: str
+        batch file path.
+        Can be none, however
+        then needs data_type
+
+    Returns
+    -------
+    data_type: str
+        str of data type
+    """
+    datatype = datatype_checker(data_type, batch)
+    error_and_exit(datatype, "Unable to work out how to process batch file")
+    return data_type
+
+
+def study_create(
+    study_folder: str, qunex_con_image: str, id: str, subjects_folder: str
+) -> None:
+    """
+    Warpper function around create_study
+    function
+
+    Parameters
+    -----------
+    study_folder: str
+        string to study folder
+    qunex_con_image: str
+        qunex conatiner image path
+    id: str
+        sub id
+    subjects_folder: str
+        path to subjects folder
+
+    Returns
+    -------
+    None
+    """
+    study_create = create_study(study_folder, qunex_con_image, id)
+    run_cmd(study_create, no_return=True)
+    has_qunex_run_sucessfully(subjects_folder, "create_study", setup_check=True)
+
+
+def data_importing(
+    study_folder: str,
+    qunex_con_image: str,
+    id: str,
+    raw_data: str,
+    subjects_folder: str,
+) -> None:
+    """
+    Warpper function around
+
+    Parameters
+    -----------
+    study_folder: str
+        string to study folder
+    qunex_con_image: str
+        qunex conatiner image path
+    id: str
+        sub id
+    raw_data: str
+        path to raw data
+    subjects_folder: str
+        path to subjects folder
+
+    Returns
+    -------
+    None
+    """
+
+    data_importing = import_data(
+        study_folder,
+        qunex_con_image,
+        id,
+        raw_data,
+    )
+
+    import_data_output = run_cmd(data_importing)
+    has_qunex_run_sucessfully(subjects_folder, "import_bids", setup_check=True)
+    parse_output(import_data_output["stdout"], study_folder)
+
+
+def create_session(
+    subjects_folder: str, study_folder: str, qunex_con_image: str, id: str
+) -> str:
+    """
+    Warpper function around create_session
+    function
+
+    Parameters
+    -----------
+    subjects_folder: str
+        path to subjects folder
+    study_folder: str
+        string to study folder
+    qunex_con_image: str
+        qunex conatiner image path
+    id: str
+        sub id
+
+    Returns
+    -------
+    session_id: str
+        session id for
+        created session
+    """
+    session_id = get_session_id(os.path.join(subjects_folder, "sessions"))
+    ses_info = create_session_info(study_folder, qunex_con_image, id, session_id)
+    run_cmd(ses_info, no_return=True)
+    has_qunex_run_sucessfully(subjects_folder, "create_session_info", setup_check=True)
+    return session_id
+
+
+def process_batch(
+    datatype: str,
+    study_folder: str,
+    batch_input: str,
+    subjects_folder: str,
+    qunex_con_image: str,
+    id: str,
+    session_id: str,
+) -> None:
+    """
+    Warpper function around create_batch
+    function
+
+    Parameters
+    -----------
+    data_type: str
+        str of data type
+    study_folder: str
+        string to study folder
+    batch_input: str
+        str of custom batch, can be None.
+    subjects_folder: str
+        path to subjects folder
+    qunex_con_image: str
+        qunex conatiner image path
+    id: str
+        sub id
+    session_id: str
+        session id for
+        created session
+
+    Returns
+    -------
+    None
+    """
+
+    batch_file(datatype, study_folder, batch_input)
+
+    batch = create_batch(
+        study_folder,
+        qunex_con_image,
+        id,
+        session_id,
+        os.path.join(study_folder, "hcp_batch.txt"),
+    )
+    run_cmd(batch, no_return=True)
+    has_qunex_run_sucessfully(subjects_folder, "create_batch", setup_check=True)
+
+
+def hcp_data_setup(
+    study_folder: str,
+    qunex_con_image: str,
+    id: str,
+    session_id: str,
+    raw_data: str,
+    subjects_folder: str,
+) -> None:
+    """
+    Warpper function around create_batch
+    function
+
+    Parameters
+    -----------
+    study_folder: str
+        string to study folder
+    qunex_con_image: str
+        qunex conatiner image path
+    raw_data: str
+        path to raw data
+    id: str
+        sub id
+    session_id: str
+        session id for
+        created session
+    subjects_folder: str
+        path to subjects folder
+    Returns
+    -------
+    None
+    """
+    hcp_setup = set_up_hcp(study_folder, qunex_con_image, id, session_id, raw_data)
+    run_cmd(hcp_setup, no_return=True)
+    has_qunex_run_sucessfully(subjects_folder, "setup_hcp", setup_check=True)
+
+
 def set_up_qunex_study(args: dict) -> None:
     """
     Main Function for setting
@@ -188,47 +397,43 @@ def set_up_qunex_study(args: dict) -> None:
     -------
     None
     """
-    datatype = datatype_checker(args["data_type"], args["batch"])
-    error_and_exit(datatype, "Unable to work out how to process batch file")
+    datatype = data_check(args["data_type"], args["batch"])
     print(f"Setting up Subject: {args['id']}")
     print(f"Data type: {datatype}")
     qunex_con_image = container_path()
     subjects_folder = os.path.join(args["study_folder"], args["id"])
     remove_folder(subjects_folder)
-    study_create = create_study(args["study_folder"], qunex_con_image, args["id"])
-    run_cmd(study_create, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "create_study", setup_check=True)
-    data_importing = import_data(
+    study_create(args["study_folder"], qunex_con_image, args["id"], subjects_folder)
+    data_importing(
         args["study_folder"],
         qunex_con_image,
         args["id"],
         args["raw_data"],
+        subjects_folder,
     )
 
-    import_data_output = run_cmd(data_importing)
-    has_qunex_run_sucessfully(subjects_folder, "import_bids", setup_check=True)
-    parse_output(import_data_output["stdout"], args["study_folder"])
-    session_id = get_session_id(os.path.join(subjects_folder, "sessions"))
-    ses_info = create_session_info(
-        args["study_folder"], qunex_con_image, args["id"], session_id
+    session_id = create_session(
+        subjects_folder, args["study_folder"], qunex_con_image, args["id"]
     )
-    run_cmd(ses_info, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "create_session_info", setup_check=True)
-    batch_file(datatype, args["study_folder"], args["batch"])
-    batch = create_batch(
+
+    process_batch(
+        datatype,
+        args["study_folder"],
+        args["batch"],
+        subjects_folder,
+        qunex_con_image,
+        args["id"],
+        session_id,
+    )
+
+    hcp_data_setup(
         args["study_folder"],
         qunex_con_image,
         args["id"],
         session_id,
-        os.path.join(args["study_folder"], "hcp_batch.txt"),
+        args["raw_data"],
+        subjects_folder,
     )
-    run_cmd(batch, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "create_batch", setup_check=True)
-    hcp_setup = set_up_hcp(
-        args["study_folder"], qunex_con_image, args["id"], session_id, args["raw_data"]
-    )
-    run_cmd(hcp_setup, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "setup_hcp", setup_check=True)
     os.remove(os.path.join(args["study_folder"], "hcp_batch.txt"))
     os.remove(os.path.join(args["study_folder"], "hcp_mapping_file.txt"))
     print(f"Finished setting up directory: {args['id']}")
