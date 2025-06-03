@@ -4,10 +4,26 @@ from qpipeline.base.utils import has_qunex_run_sucessfully, check_progress
 import os
 
 
-def run_module(module_cmd, sub_dir, args):
-    cmd = run_structural(args, "pre_freesurfer")
+def run_module(module_cmd: str, sub_dir: str, args: dict) -> None:
+    """
+    Function to run a structural module
+
+    Parameters
+    ----------
+    module_cmd: str
+        str of module to be ran
+    sub_dir: str
+        str of subjs directory
+    args: dict
+        dictionary of cmd args
+    
+    Returns
+    -------
+    None
+    """
+    cmd = run_structural(args, module_cmd)
     wait_for_me(cmd["stdout"])
-    has_qunex_run_sucessfully(sub_dir, "pre_freesurfer")
+    has_qunex_run_sucessfully(sub_dir, module_cmd)
     print(f"{module_cmd} done")
 
 
@@ -29,5 +45,6 @@ def hcp_structual(args: dict) -> None:
     modules = ["pre_freesurfer", "freesurfer", "post_freesurfer"]
     for module in modules:
         if check_progress(sub_dir, module):
-            print(f"{module} ran. Skipping")
+            print(f"{module} ran. Skipping...")
+            continue
         run_module(module, sub_dir, args)

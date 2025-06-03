@@ -158,7 +158,7 @@ def check_input(args: dict) -> None:
     folder_paths = (
         [args["study_folder"], args["raw_data"]]
         if "raw_data" in args.keys()
-        else args["study_folder"]
+        else [args["study_folder"]]
     )
     check_paths_absolute(folder_paths)
     check_folders_exist(folder_paths)
