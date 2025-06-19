@@ -222,6 +222,57 @@ def delete_files_in_dir(path: str) -> None:
         error_and_exit(f"Unable to delete files in {path} due to {e}")
 
 
+def check_logs(
+    logs_directory: str, command_ran: str, setup_check: bool = False
+) -> list:
+    """
+    Function to check log files fpr
+    completed files.
+
+    Parameters
+    ----------
+    logs_directory: str
+        directory of the log files
+    command_ran: str
+        str of command run
+    setup_check: bool
+        is the cmd that was run
+        a setup cmd.
+
+    Returns
+    -------
+    list: list object
+        list of log files
+        that have been completed
+    """
+    log_name = f"done_hcp_{command_ran}" if not setup_check else f"done_{command_ran}"
+    return glob.glob(os.path.join(logs_directory, f"{log_name}*"))
+
+
+def check_progress(sub_dir: str, command_ran: str) -> bool:
+    """
+    Function to check progress.
+    Checks if a cmd had already been ran
+    and if completed correctly.
+
+    Parameters
+    -----------
+    sub_dir: str
+        path to qunex sub directory
+    command_ran: str
+        str of command run
+
+    Returns
+    -------
+    bool: boolean
+        true if has been sucessfully
+        completed
+    """
+    logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
+    done = check_logs(logs_directory, command_ran)
+    return True if done else False
+
+
 def has_qunex_run_sucessfully(
     sub_dir: str, command_ran: str, setup_check: bool = False
 ) -> None:
@@ -241,9 +292,7 @@ def has_qunex_run_sucessfully(
     None
     """
     logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
-    log_name = f"done_hcp_{command_ran}" if not setup_check else f"done_{command_ran}"
-    log_file = glob.glob(os.path.join(logs_directory, f"{log_name}*"))
-    print(log_file)
+    log_file = check_logs(logs_directory, command_ran, setup_check)
     if not log_file:
         error_and_exit(
             False,

@@ -135,7 +135,9 @@ def check_bids_folder(bids_dir: str) -> None:
     for folder in folders_to_look_for:
         folder_path = check_folder_recursively(bids_dir, folder)
         everything_ok = check_folder_is_setup(folder_path)
-        error_and_exit(everything_ok, f"{folder} found. Please check bids directory")
+        error_and_exit(
+            everything_ok, f"{folder} not found. Please check bids directory"
+        )
 
 
 def check_input(args: dict) -> None:
@@ -158,7 +160,7 @@ def check_input(args: dict) -> None:
     folder_paths = (
         [args["study_folder"], args["raw_data"]]
         if "raw_data" in args.keys()
-        else args["study_folder"]
+        else [args["study_folder"]]
     )
     check_paths_absolute(folder_paths)
     check_folders_exist(folder_paths)
