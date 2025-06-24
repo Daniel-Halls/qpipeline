@@ -4,6 +4,8 @@
 requires = ["setuptools>=44.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["qpipeline"]
 [project]
 name = "qpipeline"
 version = "0.0.1"

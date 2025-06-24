@@ -29,7 +29,6 @@ def run_structural(args: dict, stage: str) -> dict:
         stage=stage,
         is_flair=args.get("is_flair", False),
     )
-
     return run_cmd([cmd])
 
 
