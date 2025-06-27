@@ -1,4 +1,4 @@
-def create_study(study_folder: str, qunex_con_image: str, sub_id: str) -> list:
+def create_study(study_folder: str, qunex_con_image: str) -> list:
     """
     Function for the qunex create study command
 
@@ -8,8 +8,7 @@ def create_study(study_folder: str, qunex_con_image: str, sub_id: str) -> list:
         study folder path
     qunex_con_image: str
         qunex container path
-    sub_id: str
-        subject id
+
 
     Returns
     -------
@@ -19,7 +18,7 @@ def create_study(study_folder: str, qunex_con_image: str, sub_id: str) -> list:
 
     return [
         f"""qunex_container create_study \\
-        --studyfolder={study_folder}/{sub_id}\\
+        --studyfolder={study_folder}\\
         --bind={study_folder}:{study_folder}\\
         --container={qunex_con_image}
         """
@@ -54,7 +53,7 @@ def import_data(
 
     return [
         f"""qunex_container import_bids \\
-    --sessionsfolder={study_folder}/{sub_id}/sessions \\
+    --sessionsfolder={study_folder}/sessions \\
     --inbox={raw_data} \\
     --action=copy \\
     --archive=leave \\
@@ -69,7 +68,6 @@ def create_session_info(
     study_folder: str,
     qunex_con_image: str,
     sub_id: str,
-    session_id: str,
 ) -> list:
     """
     Function for the qunex import bids command
@@ -93,8 +91,7 @@ def create_session_info(
 
     return [
         f"""qunex_container create_session_info \\
-    --sessionsfolder={study_folder}/{sub_id}/sessions \\
-    --sessions={session_id} \\
+    --sessionsfolder={study_folder}/sessions \\
     --bind={study_folder}:{study_folder} \\
     --mapping={study_folder}/hcp_mapping_file.txt \\
     --container={qunex_con_image}
@@ -105,8 +102,6 @@ def create_session_info(
 def create_batch(
     study_folder: str,
     qunex_con_image: str,
-    sub_id: str,
-    session_id: str,
     path_to_batch: str,
 ) -> list:
     """
@@ -118,10 +113,6 @@ def create_batch(
         study folder path
     qunex_con_image: str
         qunex container path
-    sub_id: str
-        subject id
-    session_id: str
-        session id
     path_to_batch: str
         path to batch file
 
@@ -134,12 +125,10 @@ def create_batch(
     return [
         f"""qunex_container create_batch \\
     --bind={study_folder}:{study_folder} \\
-    --sessionsfolder={study_folder}/{sub_id}/sessions \\
-    --targetfile={study_folder}/{sub_id}/processing/batch.txt \\
+    --sessionsfolder={study_folder}/sessions \\
+    --targetfile={study_folder}/processing/batch.txt \\
     --paramfile={path_to_batch} \\
-    --sessions={session_id} \\
     --overwrite=yes \\
-    --sourcefiles={study_folder}/{sub_id}/sessions/{session_id}/session_hcp.txt \\
     --container={qunex_con_image}
     """
     ]
@@ -149,7 +138,6 @@ def set_up_hcp(
     study_folder: str,
     qunex_con_image: str,
     sub_id: str,
-    session_id: str,
     raw_data: str,
 ) -> list:
     """
@@ -177,12 +165,8 @@ def set_up_hcp(
     return [
         f"""qunex_container setup_hcp \\
     --bind={study_folder}:{study_folder},{raw_data}:{raw_data} \\
-    --sessionsfolder={study_folder}/{sub_id}/sessions \\
-    --sessions={session_id} \\
-    --sourcefolder={study_folder}/{sub_id}/sessions/{session_id} \\
-    --sourcefile={study_folder}/{sub_id}/sessions/{session_id}/session_hcp.txt \\
-    --existing=add \\
-    --hcp_folderstructure=hcpls \\
+    --sessionsfolder={study_folder}/sessions \\
+    --batchfile={study_folder}/processing/batch.txt \\
     --container={qunex_con_image}
     """
     ]

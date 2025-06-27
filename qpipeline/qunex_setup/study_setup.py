@@ -201,7 +201,7 @@ def data_check(data_type: str, batch: str) -> str:
 
 
 def study_create(
-    study_folder: str, qunex_con_image: str, id: str, subjects_folder: str
+    study_folder: str, qunex_con_image: str, 
 ) -> None:
     """
     Warpper function around create_study
@@ -213,18 +213,14 @@ def study_create(
         string to study folder
     qunex_con_image: str
         qunex conatiner image path
-    id: str
-        sub id
-    subjects_folder: str
-        path to subjects folder
 
     Returns
     -------
     None
     """
-    study_create = create_study(study_folder, qunex_con_image, id)
+    study_create = create_study(study_folder, qunex_con_image)
     run_cmd(study_create, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "create_study", setup_check=True)
+    has_qunex_run_sucessfully(study_folder, "create_study", setup_check=True)
 
 
 def data_importing(
@@ -232,7 +228,6 @@ def data_importing(
     qunex_con_image: str,
     id: str,
     raw_data: str,
-    subjects_folder: str,
 ) -> None:
     """
     Warpper function around
@@ -247,8 +242,6 @@ def data_importing(
         sub id
     raw_data: str
         path to raw data
-    subjects_folder: str
-        path to subjects folder
 
     Returns
     -------
@@ -263,12 +256,12 @@ def data_importing(
     )
 
     import_data_output = run_cmd(data_importing)
-    has_qunex_run_sucessfully(subjects_folder, "import_bids", setup_check=True)
+    has_qunex_run_sucessfully(study_folder, "import_bids", setup_check=True)
     parse_output(import_data_output["stdout"], study_folder)
 
 
 def create_session(
-    subjects_folder: str, study_folder: str, qunex_con_image: str, id: str
+    study_folder: str, qunex_con_image: str, id: str
 ) -> str:
     """
     Warpper function around create_session
@@ -291,21 +284,18 @@ def create_session(
         session id for
         created session
     """
-    session_id = get_session_id(os.path.join(subjects_folder, "sessions"))
-    ses_info = create_session_info(study_folder, qunex_con_image, id, session_id)
+    #session_id = get_session_id(os.path.join(subjects_folder, "sessions"))
+    ses_info = create_session_info(study_folder, qunex_con_image, id)
     run_cmd(ses_info, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "create_session_info", setup_check=True)
-    return session_id
+    has_qunex_run_sucessfully(study_folder, "create_session_info", setup_check=True)
+    #return session_id
 
 
 def process_batch(
     datatype: str,
     study_folder: str,
     batch_input: str,
-    subjects_folder: str,
     qunex_con_image: str,
-    id: str,
-    session_id: str,
 ) -> None:
     """
     Warpper function around create_batch
@@ -339,19 +329,16 @@ def process_batch(
     batch = create_batch(
         study_folder,
         qunex_con_image,
-        id,
-        session_id,
         os.path.join(study_folder, "hcp_batch.txt"),
     )
     run_cmd(batch, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "create_batch", setup_check=True)
+    has_qunex_run_sucessfully(study_folder, "create_batch", setup_check=True)
 
 
 def hcp_data_setup(
     study_folder: str,
     qunex_con_image: str,
     id: str,
-    session_id: str,
     raw_data: str,
     subjects_folder: str,
 ) -> None:
@@ -378,9 +365,11 @@ def hcp_data_setup(
     -------
     None
     """
-    hcp_setup = set_up_hcp(study_folder, qunex_con_image, id, session_id, raw_data)
-    run_cmd(hcp_setup, no_return=True)
-    has_qunex_run_sucessfully(subjects_folder, "setup_hcp", setup_check=True)
+    print("doing this")
+    hcp_setup = set_up_hcp(study_folder, qunex_con_image, id, raw_data)
+    output = run_cmd(hcp_setup, no_return=False)
+    print(output)
+    #has_qunex_run_sucessfully(study_folder, "setup_hcp", setup_check=True)
 
 
 def set_up_qunex_study(args: dict) -> None:
@@ -398,42 +387,37 @@ def set_up_qunex_study(args: dict) -> None:
     None
     """
     datatype = data_check(args["data_type"], args["batch"])
-    print(f"Setting up Subject: {args['id']}")
+    print("Setting up Subjects")
     print(f"Data type: {datatype}")
     qunex_con_image = container_path()
     subjects_folder = os.path.join(args["study_folder"], args["id"])
-    remove_folder(subjects_folder)
-    study_create(args["study_folder"], qunex_con_image, args["id"], subjects_folder)
+    #remove_folder(args["study_folder"])
+    study_create(args["study_folder"], qunex_con_image)
     data_importing(
         args["study_folder"],
         qunex_con_image,
         args["id"],
-        args["raw_data"],
-        subjects_folder,
+        args["raw_data"]
     )
 
-    session_id = create_session(
-        subjects_folder, args["study_folder"], qunex_con_image, args["id"]
+    create_session(  
+      args["study_folder"], qunex_con_image, args["id"]
     )
 
     process_batch(
         datatype,
         args["study_folder"],
         args["batch"],
-        subjects_folder,
         qunex_con_image,
-        args["id"],
-        session_id,
     )
 
     hcp_data_setup(
         args["study_folder"],
         qunex_con_image,
         args["id"],
-        session_id,
         args["raw_data"],
         subjects_folder,
     )
     os.remove(os.path.join(args["study_folder"], "hcp_batch.txt"))
     os.remove(os.path.join(args["study_folder"], "hcp_mapping_file.txt"))
-    print(f"Finished setting up directory: {args['id']}")
+    print(f"Finished setting up")
