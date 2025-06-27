@@ -273,12 +273,6 @@ def diffusion_commands(args) -> dict:
     diffusion_args = args.add_parser("diffusion", help="To run HCP diffusion pipeline")
     default_args(diffusion_args)
     diffusion_args.add_argument(
-        "-i",
-        "--subject_id",
-        help="Subject ID",
-        dest="id",
-    )
-    diffusion_args.add_argument(
         "-q",
         "--queue",
         help="""Which queue to submit to. 
