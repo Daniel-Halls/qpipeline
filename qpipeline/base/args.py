@@ -244,12 +244,6 @@ def strucutral_commands(args) -> dict:
     )
     default_args(strucutral_args)
     strucutral_args.add_argument(
-        "-i",
-        "--subject_id",
-        help="Subject ID",
-        dest="id",
-    )
-    strucutral_args.add_argument(
         "-q",
         "--queue",
         help="""Which queue to submit to. 

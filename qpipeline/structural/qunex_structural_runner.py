@@ -19,11 +19,10 @@ def run_structural(args: dict, stage: str) -> dict:
     dict: run_cmd output
         Output from run_cmd.
     """
-    print(f"Running {stage.replace('_', '-').title()} on: {args['id']}")
+    print(f"Running {stage.replace('_', '-').title()}")
     qunex_con_image = container_path()
     cmd = build_structural_cmd(
         study_folder=args["study_folder"],
-        sub_id=args["id"],
         qunex_con_image=qunex_con_image,
         queue=args.get("queue", ""),
         stage=stage,
@@ -34,7 +33,6 @@ def run_structural(args: dict, stage: str) -> dict:
 
 def build_structural_cmd(
     study_folder: str,
-    sub_id: str,
     qunex_con_image: str,
     queue: str,
     stage: str,
@@ -47,8 +45,6 @@ def build_structural_cmd(
     ----------
     study_folder: str
         Path to study folder.
-    sub_id: str
-        Subject ID.
     qunex_con_image: str
         Container path.
     queue: str
@@ -66,8 +62,8 @@ def build_structural_cmd(
     """
     cmd = f"""qunex_container hcp_{stage} \\
       --bind={study_folder}:{study_folder} \\
-      --sessionsfolder={study_folder}/{sub_id}/sessions \\
-      --batchfile={study_folder}/{sub_id}/processing/batch.txt \\
+      --sessionsfolder={study_folder}/sessions \\
+      --batchfile={study_folder}/processing/batch.txt \\
       --container={qunex_con_image} \\
       --overwrite=yes"""
 
@@ -77,6 +73,6 @@ def build_structural_cmd(
     if queue:
         cmd += f""" \\
       --bash_pre="module load qunex-img/0.100.0;module load cuda-img/9.1" \\
-      --scheduler="SLURM,time=24:00:00,ntasks=1,cpus-per-task=1,mem-per-cpu=50000,partition={queue},qos=img,gres=gpu:1,jobname={stage}_{sub_id}" """
+      --scheduler="SLURM,time=24:00:00,ntasks=1,cpus-per-task=1,mem-per-cpu=50000,partition={queue},qos=img,gres=gpu:1,jobname={stage}" """
 
     return cmd
