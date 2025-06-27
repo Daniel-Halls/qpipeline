@@ -60,7 +60,6 @@ class Queue_Monitoring:
         self.__spinner_running = True
         spinner_thread = threading.Thread(target=self.__spinner, daemon=True)
         spinner_thread.start()
-        print(job_id)
         try:
             with tqdm(
                 total=len(job_id),

@@ -20,6 +20,8 @@ def run_structural(args: dict, stage: str) -> dict:
         Output from run_cmd.
     """
     print(f"Running: {stage.replace('_', '-').title()}", flush=True)
+    print("-" * 75, flush=True)
+    print("\n")
     qunex_con_image = container_path()
     cmd = build_structural_cmd(
         study_folder=args["study_folder"],
