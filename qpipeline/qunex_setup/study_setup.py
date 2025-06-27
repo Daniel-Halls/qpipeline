@@ -19,39 +19,6 @@ import shutil
 from pathlib import Path
 
 
-def get_session_id(session_folder):
-    """
-    Function to get session
-    id as qunex doesn't seem
-    to allow custom ids when
-    using bids......
-
-    Parameters
-    ----------
-    session_folder: str
-        string to session folder
-
-    Returns
-    -------
-    session_id: str
-        string of session id
-    """
-    qunex_stuff = ["archive", "specs", "QC", "inbox"]
-    session_folder_content = os.listdir(session_folder)
-    try:
-        session_id = [
-            sess_name
-            for sess_name in session_folder_content
-            if sess_name not in qunex_stuff
-        ][0]
-    except Exception:
-        error_and_exit(
-            False,
-            f"Cannot find session name. Please check name in {session_folder} and update mapping files",
-        )
-    return session_id
-
-
 def map_files() -> dict:
     """
     Function to map files in qunex format.
@@ -238,8 +205,6 @@ def data_importing(
         string to study folder
     qunex_con_image: str
         qunex conatiner image path
-    id: str
-        sub id
     raw_data: str
         path to raw data
 
@@ -266,8 +231,6 @@ def create_session(study_folder: str, qunex_con_image: str) -> str:
 
     Parameters
     -----------
-    subjects_folder: str
-        path to subjects folder
     study_folder: str
         string to study folder
     qunex_con_image: str
@@ -298,21 +261,14 @@ def process_batch(
 
     Parameters
     -----------
-    data_type: str
+    datatype: str
         str of data type
     study_folder: str
         string to study folder
     batch_input: str
         str of custom batch, can be None.
-    subjects_folder: str
-        path to subjects folder
     qunex_con_image: str
         qunex conatiner image path
-    id: str
-        sub id
-    session_id: str
-        session id for
-        created session
 
     Returns
     -------
@@ -343,11 +299,7 @@ def hcp_data_setup(study_folder: str, qunex_con_image: str, raw_data: str) -> No
         qunex conatiner image path
     raw_data: str
         path to raw data
-    session_id: str
-        session id for
-        created session
-    subjects_folder: str
-        path to subjects folder
+
     Returns
     -------
     None
