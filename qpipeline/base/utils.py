@@ -274,7 +274,7 @@ def check_progress(sub_dir: str, command_ran: str) -> bool:
 
 
 def has_qunex_run_sucessfully(
-    sub_dir: str, command_ran: str, setup_check: bool = False
+    qunex_dir: str, command_ran: str, setup_check: bool = False
 ) -> None:
     """
     Function to check qunex log files
@@ -291,7 +291,7 @@ def has_qunex_run_sucessfully(
     -------
     None
     """
-    logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
+    logs_directory = os.path.join(qunex_dir, "processing", "logs", "comlogs")
     log_file = check_logs(logs_directory, command_ran, setup_check)
     if not log_file:
         error_and_exit(
@@ -300,7 +300,7 @@ def has_qunex_run_sucessfully(
         )
 
 
-def remove_folder(folder_path: str) -> None:
+def folder_creation(folder_path: str, overwrite=False) -> None:
     """
     Function to remove folder
 
@@ -313,5 +313,7 @@ def remove_folder(folder_path: str) -> None:
     -------
     None
     """
-    if os.path.exists(folder_path):
+    if os.path.exists(folder_path) and overwrite:
         shutil.rmtree(folder_path)
+    if not os.path.exists(folder_path):
+        os.mkdir(folder_path)

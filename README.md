@@ -30,16 +30,25 @@ pip install -e .
 ## Setup
 ---------------------------------------------------------------------------
 This is to set up a qunex folder. The input data must be in bids format.
+
+qpipeline works by importing all the subjects in the raw data folder into a qunex study folder
+
 ```
-usage: qpipeline setup [-h] -s STUDY_FOLDER -r RAW_DATA -i ID
+usage: qpipeline setup [-h] [-s STUDY_FOLDER] [-L] [-O] -r RAW_DATA [-d {hcp,biobank}] [-b BATCH]
 
 options:
   -h, --help            show this help message and exit
   -s STUDY_FOLDER, --study_folder STUDY_FOLDER
                         Path to study folder
+  -L, --Load_env        Use this option to load qunex enviorment (currently only works on nottingham cluster)
+  -O, --overwrite       Overwrite exsiting study folder
   -r RAW_DATA, --raw_data RAW_DATA
                         Path to raw data
-  -i ID, --id ID        Subject ID
+  -d {hcp,biobank}, --data_type {hcp,biobank}
+                        Which type of data (HCP style or biobank) is being processed. Either HCP or biobank (case insensitive)
+  -b BATCH, --batch BATCH
+                        Full path to a custom batch file with parameters for the hcp pipeline. Must be called hcp_batch.txt
+
 ```
 
 ## HCP Structural pipeline

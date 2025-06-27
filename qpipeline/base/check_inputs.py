@@ -25,25 +25,6 @@ def check_paths_absolute(paths_to_check: list) -> None:
         )
 
 
-def check_folders_exist(paths: list) -> None:
-    """
-    Function to check that folders exist
-
-    Parameters
-    ----------
-    paths: list
-       list of paths to
-       check that they exist
-
-    Returns
-    -------
-    None
-    """
-    for path in paths:
-        if not os.path.exists(path):
-            error_and_exit(False, f"{path} does not exist. Please check input")
-
-
 def check_datatype(args: dict) -> None:
     """
     Function to check given datatype
@@ -77,10 +58,12 @@ def check_complusory_arguments(args: dict) -> None:
     -------
     None
     """
-    compulsory = ["study_folder", "id"]
+    compulsory = ["study_folder"]
     if args["command"] == "setup":
         compulsory.append("raw_data")
         check_datatype(args)
+    else:
+        compulsory.append("id")
 
     for key in compulsory:
         error_and_exit(
@@ -163,7 +146,7 @@ def check_input(args: dict) -> None:
         else [args["study_folder"]]
     )
     check_paths_absolute(folder_paths)
-    check_folders_exist(folder_paths)
+
     if args["command"] == "setup":
         check_bids_folder(args["raw_data"])
 

@@ -165,12 +165,6 @@ def default_args(args: object) -> None:
         dest="study_folder",
     )
     args.add_argument(
-        "-i",
-        "--subject_id",
-        help="Subject ID",
-        dest="id",
-    )
-    args.add_argument(
         "-L",
         "--Load_env",
         help="""Use this option to load qunex enviorment (currently only works on nottingham cluster)""",
@@ -196,6 +190,13 @@ def hcp_setup_args(args) -> dict:
     """
     study_setup_args = args.add_parser("setup", help="Set up study")
     default_args(study_setup_args)
+    study_setup_args.add_argument(
+        "-O",
+        "--overwrite",
+        help="Overwrite exsiting study folder",
+        dest="overwrite",
+        action="store_true",
+    )
     study_setup_args.add_argument(
         "-r",
         "--raw_data",
@@ -243,6 +244,12 @@ def strucutral_commands(args) -> dict:
     )
     default_args(strucutral_args)
     strucutral_args.add_argument(
+        "-i",
+        "--subject_id",
+        help="Subject ID",
+        dest="id",
+    )
+    strucutral_args.add_argument(
         "-q",
         "--queue",
         help="""Which queue to submit to. 
@@ -271,6 +278,12 @@ def diffusion_commands(args) -> dict:
     """
     diffusion_args = args.add_parser("diffusion", help="To run HCP diffusion pipeline")
     default_args(diffusion_args)
+    diffusion_args.add_argument(
+        "-i",
+        "--subject_id",
+        help="Subject ID",
+        dest="id",
+    )
     diffusion_args.add_argument(
         "-q",
         "--queue",
