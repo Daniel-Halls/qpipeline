@@ -300,7 +300,7 @@ def has_qunex_run_sucessfully(
         )
 
 
-def remove_folder(folder_path: str) -> None:
+def folder_creation(folder_path: str, overwrite=False) -> None:
     """
     Function to remove folder
 
@@ -313,5 +313,7 @@ def remove_folder(folder_path: str) -> None:
     -------
     None
     """
-    if os.path.exists(folder_path):
+    if os.path.exists(folder_path) and overwrite:
         shutil.rmtree(folder_path)
+    if not os.path.exists(folder_path):
+        os.mkdir(folder_path)

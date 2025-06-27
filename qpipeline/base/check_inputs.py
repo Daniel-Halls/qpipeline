@@ -77,10 +77,12 @@ def check_complusory_arguments(args: dict) -> None:
     -------
     None
     """
-    compulsory = ["study_folder", "id"]
+    compulsory = ["study_folder"]
     if args["command"] == "setup":
         compulsory.append("raw_data")
         check_datatype(args)
+    else:
+        compulsory.append("id")
 
     for key in compulsory:
         error_and_exit(
@@ -163,7 +165,7 @@ def check_input(args: dict) -> None:
         else [args["study_folder"]]
     )
     check_paths_absolute(folder_paths)
-    check_folders_exist(folder_paths)
+    # check_folders_exist(folder_paths)
     if args["command"] == "setup":
         check_bids_folder(args["raw_data"])
 

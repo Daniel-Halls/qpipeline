@@ -4,7 +4,7 @@ from qpipeline.base.utils import (
     container_path,
     has_qunex_run_sucessfully,
     error_and_exit,
-    remove_folder,
+    folder_creation,
 )
 from qpipeline.qunex_setup.qunex_commands import (
     create_study,
@@ -201,7 +201,8 @@ def data_check(data_type: str, batch: str) -> str:
 
 
 def study_create(
-    study_folder: str, qunex_con_image: str, 
+    study_folder: str,
+    qunex_con_image: str,
 ) -> None:
     """
     Warpper function around create_study
@@ -226,7 +227,6 @@ def study_create(
 def data_importing(
     study_folder: str,
     qunex_con_image: str,
-    id: str,
     raw_data: str,
 ) -> None:
     """
@@ -251,7 +251,6 @@ def data_importing(
     data_importing = import_data(
         study_folder,
         qunex_con_image,
-        id,
         raw_data,
     )
 
@@ -260,9 +259,7 @@ def data_importing(
     parse_output(import_data_output["stdout"], study_folder)
 
 
-def create_session(
-    study_folder: str, qunex_con_image: str, id: str
-) -> str:
+def create_session(study_folder: str, qunex_con_image: str) -> str:
     """
     Warpper function around create_session
     function
@@ -284,11 +281,9 @@ def create_session(
         session id for
         created session
     """
-    #session_id = get_session_id(os.path.join(subjects_folder, "sessions"))
-    ses_info = create_session_info(study_folder, qunex_con_image, id)
+    ses_info = create_session_info(study_folder, qunex_con_image)
     run_cmd(ses_info, no_return=True)
     has_qunex_run_sucessfully(study_folder, "create_session_info", setup_check=True)
-    #return session_id
 
 
 def process_batch(
@@ -335,13 +330,7 @@ def process_batch(
     has_qunex_run_sucessfully(study_folder, "create_batch", setup_check=True)
 
 
-def hcp_data_setup(
-    study_folder: str,
-    qunex_con_image: str,
-    id: str,
-    raw_data: str,
-    subjects_folder: str,
-) -> None:
+def hcp_data_setup(study_folder: str, qunex_con_image: str, raw_data: str) -> None:
     """
     Warpper function around create_batch
     function
@@ -354,8 +343,6 @@ def hcp_data_setup(
         qunex conatiner image path
     raw_data: str
         path to raw data
-    id: str
-        sub id
     session_id: str
         session id for
         created session
@@ -365,11 +352,9 @@ def hcp_data_setup(
     -------
     None
     """
-    print("doing this")
-    hcp_setup = set_up_hcp(study_folder, qunex_con_image, id, raw_data)
-    output = run_cmd(hcp_setup, no_return=False)
-    print(output)
-    #has_qunex_run_sucessfully(study_folder, "setup_hcp", setup_check=True)
+    hcp_setup = set_up_hcp(study_folder, qunex_con_image, raw_data)
+    run_cmd(hcp_setup, no_return=True)
+    has_qunex_run_sucessfully(study_folder, "setup_hcp", setup_check=True)
 
 
 def set_up_qunex_study(args: dict) -> None:
@@ -389,20 +374,13 @@ def set_up_qunex_study(args: dict) -> None:
     datatype = data_check(args["data_type"], args["batch"])
     print("Setting up Subjects")
     print(f"Data type: {datatype}")
+    print(f"Overwriting {args['study_folder']}") if args["overwrite"] else None
     qunex_con_image = container_path()
-    subjects_folder = os.path.join(args["study_folder"], args["id"])
-    #remove_folder(args["study_folder"])
+    folder_creation(args["study_folder"], args["overwrite"])
     study_create(args["study_folder"], qunex_con_image)
-    data_importing(
-        args["study_folder"],
-        qunex_con_image,
-        args["id"],
-        args["raw_data"]
-    )
+    data_importing(args["study_folder"], qunex_con_image, args["raw_data"])
 
-    create_session(  
-      args["study_folder"], qunex_con_image, args["id"]
-    )
+    create_session(args["study_folder"], qunex_con_image)
 
     process_batch(
         datatype,
@@ -411,13 +389,7 @@ def set_up_qunex_study(args: dict) -> None:
         qunex_con_image,
     )
 
-    hcp_data_setup(
-        args["study_folder"],
-        qunex_con_image,
-        args["id"],
-        args["raw_data"],
-        subjects_folder,
-    )
+    hcp_data_setup(args["study_folder"], qunex_con_image, args["raw_data"])
     os.remove(os.path.join(args["study_folder"], "hcp_batch.txt"))
     os.remove(os.path.join(args["study_folder"], "hcp_mapping_file.txt"))
-    print(f"Finished setting up")
+    print("Finished setting up")

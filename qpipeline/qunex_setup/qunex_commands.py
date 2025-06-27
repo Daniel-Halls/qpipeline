@@ -28,7 +28,6 @@ def create_study(study_folder: str, qunex_con_image: str) -> list:
 def import_data(
     study_folder: str,
     qunex_con_image: str,
-    sub_id: str,
     raw_data: str,
 ) -> list:
     """
@@ -67,7 +66,6 @@ def import_data(
 def create_session_info(
     study_folder: str,
     qunex_con_image: str,
-    sub_id: str,
 ) -> list:
     """
     Function for the qunex import bids command
@@ -137,7 +135,6 @@ def create_batch(
 def set_up_hcp(
     study_folder: str,
     qunex_con_image: str,
-    sub_id: str,
     raw_data: str,
 ) -> list:
     """
