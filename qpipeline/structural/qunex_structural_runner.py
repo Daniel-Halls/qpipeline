@@ -19,7 +19,7 @@ def run_structural(args: dict, stage: str) -> dict:
     dict: run_cmd output
         Output from run_cmd.
     """
-    print(f"Running {stage.replace('_', '-').title()}")
+    print(f"Running: {stage.replace('_', '-').title()}", flush=True)
     qunex_con_image = container_path()
     cmd = build_structural_cmd(
         study_folder=args["study_folder"],

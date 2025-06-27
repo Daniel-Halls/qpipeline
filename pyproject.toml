@@ -19,7 +19,8 @@ classifiers = [
 ]
 keywords = ["qpipeline"]
 dependencies = [
-    'fslpy'
+    'fslpy',
+    'tqdm'
 ]
 
 requires-python = ">=3.9"
