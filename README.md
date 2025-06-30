@@ -56,16 +56,17 @@ options:
 This is to run prefreesurfer, freesurfer and postfreesurfer
 
 ```
-usage: qpipeline structural [-h] -s STUDY_FOLDER [-F] -i ID [-q QUEUE]
+usage: qpipeline structural [-h] [-s STUDY_FOLDER] [-L] [-q QUEUE] [-F]
 
 options:
   -h, --help            show this help message and exit
   -s STUDY_FOLDER, --study_folder STUDY_FOLDER
                         Path to study folder
-  -F, --FLAIR           Is T2 a FLAIR image
-  -i ID, --id ID        Subject ID
+  -L, --Load_env        Use this option to load qunex enviorment (currently only works on nottingham cluster)
   -q QUEUE, --queue QUEUE
                         Which queue to submit to. Leave this as none if not running on cluster
+  -F, --FLAIR           Is T2 a FLAIR image
+
 
 ```
 
@@ -74,14 +75,15 @@ options:
 This is to runs the HCP diffusion pipeline
 
 ```
-usage: qpipeline diffusion [-h] -s STUDY_FOLDER -i ID [-q QUEUE] [-N]
+usage: qpipeline diffusion [-h] [-s STUDY_FOLDER] [-L] [-q QUEUE] [-N]
 
 options:
   -h, --help            show this help message and exit
   -s STUDY_FOLDER, --study_folder STUDY_FOLDER
                         Path to study folder
-  -i ID, --id ID        Subject ID
+  -L, --Load_env        Use this option to load qunex enviorment (currently only works on nottingham cluster)
   -q QUEUE, --queue QUEUE
                         Which queue to submit to. Leave this as none if not running on cluster
   -N, --no_gpu          Don't use eddy GPU
+
 ```
