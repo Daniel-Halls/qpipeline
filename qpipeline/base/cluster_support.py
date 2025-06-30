@@ -1,6 +1,7 @@
 import re
 import time
 import threading
+from tqdm import tqdm
 import os
 from qpipeline.base.utils import error_and_exit, run_cmd
 
@@ -25,7 +26,7 @@ def get_job_id(input_str) -> str:
             False,
             "Unable to find job ID. Job maybe still running but pipeline will exit",
         )
-    return job_number[0]
+    return job_number
 
 
 class Queue_Monitoring:
@@ -41,7 +42,6 @@ class Queue_Monitoring:
 
     def __init__(self) -> None:
         self.__spinner_running = True
-        print("Waiting for job to finish")
 
     def monitor(self, job_id: list) -> None:
         """
@@ -60,17 +60,30 @@ class Queue_Monitoring:
         self.__spinner_running = True
         spinner_thread = threading.Thread(target=self.__spinner, daemon=True)
         spinner_thread.start()
-
         try:
-            time.sleep(100)
-            while True:
-                running = self.__check_job(job_id)
-                if not running:
-                    break
-                time.sleep(300)
+            with tqdm(
+                total=len(job_id),
+                desc="Jobs completed",
+                unit="job",
+            ) as pbar:
+                completed_jobs = []
+                time.sleep(100)
+                while True:
+                    for job in job_id:
+                        if job not in completed_jobs:
+                            running = self.__check_job(job)
+                            if not running:
+                                pbar.update(1)
+                                completed_jobs.append(job)
+
+                    if len(completed_jobs) == len(job_id):
+                        pbar.close()
+                        print("All jobs have finihsed")
+                        break
+                    time.sleep(300)
 
         except KeyboardInterrupt:
-            exit(0)
+            pbar.close()
         finally:
             self.__spinner_running = False
             spinner_thread.join()
@@ -121,7 +134,7 @@ class Queue_Monitoring:
         if "Finished" in output["stdout"]:
             return False
         if "Failed" in output["stdout"]:
-            print(f"JOB {job_id} FAILED. CHECK LOGS")
+            tqdm.write(f"JOB {job_id} FAILED. CHECK LOGS")
             return False
         return True
 

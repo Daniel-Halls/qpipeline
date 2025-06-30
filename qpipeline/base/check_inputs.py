@@ -62,8 +62,6 @@ def check_complusory_arguments(args: dict) -> None:
     if args["command"] == "setup":
         compulsory.append("raw_data")
         check_datatype(args)
-    else:
-        compulsory.append("id")
 
     for key in compulsory:
         error_and_exit(

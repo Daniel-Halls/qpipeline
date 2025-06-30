@@ -249,30 +249,6 @@ def check_logs(
     return glob.glob(os.path.join(logs_directory, f"{log_name}*"))
 
 
-def check_progress(sub_dir: str, command_ran: str) -> bool:
-    """
-    Function to check progress.
-    Checks if a cmd had already been ran
-    and if completed correctly.
-
-    Parameters
-    -----------
-    sub_dir: str
-        path to qunex sub directory
-    command_ran: str
-        str of command run
-
-    Returns
-    -------
-    bool: boolean
-        true if has been sucessfully
-        completed
-    """
-    logs_directory = os.path.join(sub_dir, "processing", "logs", "comlogs")
-    done = check_logs(logs_directory, command_ran)
-    return True if done else False
-
-
 def has_qunex_run_sucessfully(
     qunex_dir: str, command_ran: str, setup_check: bool = False
 ) -> None:
